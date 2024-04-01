@@ -1,7 +1,7 @@
 import serial
 import time
 import numpy as np
-import matplotlib as p
+import matplotlib.pyplot as p
 
 N = 20000 #number of points TEST FOR ARDUINO CODE COMPABILITY
 fs = 40000 #Frequência de amostragem = 40 kHz (Sinais audíveis não excedem os 20kHz)
