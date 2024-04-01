@@ -1,0 +1,42 @@
+Directories:
+	hugo.toml -> configuration file (also affects top and bottom strips)
+	static -> all files that are not webpages; images, documents, etc. 
+	public -> stores the site
+	public/images/ -> also has the images
+	data/en -> all the modules of the page
+	content/english/blog -> blog posts (in english); to create a new blog post, copy a previous one and change it
+	i18n/en.yaml -> top strip (except logo)
+	public/author/index.html -> favicon
+		public/categories/index.html -> favicon
+		public/author/john-doe/index.html -> favicon
+		public/author/mark-dinn/index.html -> favicon
+		public/blog/index.html -> favicon
+		public/blog/page/2/index.html -> favicon
+
+Commands:
+	hugo server (noHTTPCache) -> generates an example of the website (changes in real-time)
+	hugo -> puts website on public (which then should be uploaded to the server)
+
+Modules from top to bottom:
+	banner.yml
+	about.yml (false)
+	feature.yml (false)
+	cta.yml (false)
+	service.yml 
+	skill.yml (false)
+	portfolio.yml (false)
+	funfacts.yml (false)
+	team.yml
+	pricing.yml (false)
+	testimonial.yml (false)
+	contact.yml
+
+In order to add new files, connect with the server via ssh and copy them to the /web/ directory (this also applies to blog content).
+	For example:
+		- copy images from ~/web/meghna-hugo/images/ to ~/web/images; (TALVEZ SEJA AO CONTRÁRIO; CONFIRMAR)
+		- copy blog posts from
+	Or even better: cp -ru ~/web/meghna-hugo/* ~/web/
+
+Irrelevant directories and files:
+	archetypes/
+	resources/ 
