@@ -16,6 +16,7 @@ Directories:
 Commands:
 	hugo server (noHTTPCache) -> generates an example of the website (changes in real-time)
 	hugo -> puts website on public (which then should be uploaded to the server)
+	rsync -av public/ ist1102943@sigma.tecnico.ulisboa.pt:web -> puts website o IST server
 
 Modules from top to bottom:
 	banner.yml
@@ -30,12 +31,6 @@ Modules from top to bottom:
 	pricing.yml (false)
 	testimonial.yml (false)
 	contact.yml
-
-In order to add new files, connect with the server via ssh and copy them to the /web/ directory (this also applies to blog content).
-	For example:
-		- copy images from ~/web/meghna-hugo/images/ to ~/web/images; (TALVEZ SEJA AO CONTRÁRIO; CONFIRMAR)
-		- copy blog posts from
-	Or even better: cp -ru ~/web/meghna-hugo/* ~/web/
 
 Irrelevant directories and files:
 	archetypes/
