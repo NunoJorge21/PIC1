@@ -1,8 +1,8 @@
 ---
 title: "Week 3"
 date: 2024-03-08T22:00:00+06:00
-image_webp: images/blog/interviews.webp
-image: images/blog/interviews.jpg
+image_webp: images/blog/ArrayCalc.webp
+image: images/blog/ArrayCalc.jpg
 author: SSM Team
 description: "This is meta description"
 ---
