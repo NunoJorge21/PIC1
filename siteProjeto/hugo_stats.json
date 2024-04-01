@@ -61,6 +61,8 @@
       "contact-us",
       "container",
       "content",
+      "cookie-box",
+      "cookie-box-hide",
       "copyright",
       "d-none",
       "disabled",
@@ -142,6 +144,8 @@
       "contact",
       "content",
       "footer",
+      "js-cookie-box",
+      "js-cookie-button",
       "navigation",
       "team"
     ]

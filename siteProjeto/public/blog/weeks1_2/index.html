@@ -313,6 +313,26 @@
 <script src="https://web.tecnico.ulisboa.pt/ist1102943/js/script.min.ab3836b70bc45170e8ff6dd572ee5e8e761ac8376daf9ceb40f760dfb6f2cce49672517da770a0049959f5fc93337e13.js" integrity="sha384-qzg2twvEUXDo/23Vcu5ejnYayDdtr5zrQPdg37byzOSWclF9p3CgBJlZ9fyTM34T"></script>
 
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+	This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button" class="btn btn-transparent">I Accept</span>
+</div>
+<script>
+	(function ($) {
+		const cookieBox = document.getElementById('js-cookie-box');
+		const cookieButton = document.getElementById('js-cookie-button');
+		if (!Cookies.get('cookie-box')) {
+			cookieBox.classList.remove('cookie-box-hide');
+			cookieButton.onclick = function () {
+				Cookies.set('cookie-box', true, {
+					expires:  2 
+				});
+				cookieBox.classList.add('cookie-box-hide');
+			};
+		}
+	})(jQuery);
+</script>
 </body>
 
 </html>
