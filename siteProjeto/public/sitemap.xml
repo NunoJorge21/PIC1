@@ -1,42 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/blog/</loc>
-    <lastmod>2024-03-29T22:00:00+06:00</lastmod>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/</loc>
-    <lastmod>2024-03-29T22:00:00+06:00</lastmod>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/blog/week6/</loc>
-    <lastmod>2024-03-29T22:00:00+06:00</lastmod>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/blog/week5/</loc>
-    <lastmod>2024-03-22T22:00:00+06:00</lastmod>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/blog/week4/</loc>
-    <lastmod>2024-03-15T22:00:00+06:00</lastmod>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/blog/week3/</loc>
-    <lastmod>2024-03-08T22:00:00+06:00</lastmod>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/blog/weeks1_2/</loc>
-    <lastmod>2024-03-01T22:00:00+06:00</lastmod>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/blog/hello_world/</loc>
-    <lastmod>2024-02-18T22:00:00+06:00</lastmod>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/blog/web_dev/</loc>
-    <lastmod>2024-02-18T22:00:00+06:00</lastmod>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/author/</loc>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/categories/</loc>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/author/john-doe/</loc>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/author/mark-dinn/</loc>
-  </url><url>
-    <loc>https://web.tecnico.ulisboa.pt/ist1102943/tags/</loc>
-  </url>
-</urlset>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <sitemap>
+    <loc>https://web.tecnico.ulisboa.pt/ist1102943/en/sitemap.xml</loc>
+    
+      <lastmod>2024-03-29T22:00:00+06:00</lastmod>
+    
+  </sitemap>
+  
+</sitemapindex>
