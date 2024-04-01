@@ -36,6 +36,7 @@
       "ul"
     ],
     "classes": [
+      "active",
       "all-post",
       "block",
       "border-meghna",
@@ -62,6 +63,7 @@
       "content",
       "copyright",
       "d-none",
+      "disabled",
       "fadeIn",
       "fadeInDown",
       "fadeInUp",
@@ -94,7 +96,11 @@
       "navigation",
       "offset-lg-2",
       "p-0",
+      "page-item",
+      "page-link",
       "page-scroll",
+      "pagination",
+      "pagination-default",
       "pb-5",
       "post-block",
       "post-single-content",

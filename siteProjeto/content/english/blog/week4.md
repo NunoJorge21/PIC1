@@ -7,7 +7,7 @@ author: SSM Team
 description: "This is meta description"
 ---
 
-In the 4th week of the project we met with our project's assistent, Professor Rafael Cordeiro to discuss the goals for the intermediate delivery of April 1st.
+In the 4th week of the project we met with our project assistent, Professor Rafael Cordeiro, to discuss the goals for the intermediate delivery of April 1st.
 
 Goals set at the meeting of 8/3/2024:
 * acquire signals with the RP2040 Arduino board;
