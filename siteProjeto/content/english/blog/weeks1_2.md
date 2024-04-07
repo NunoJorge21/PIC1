@@ -7,9 +7,9 @@ author: SSM Team
 description: "This is meta description"
 ---
 
-In the first two weeks we had the opportunity to interview sound professionals and possible Smart Sound Monitoring clients.
+In the first two weeks, Frederico Paula and Nuno Jorge interviewd sound professionals and possible Smart Sound Monitoring clients.
 
-Here are the main topics we discussed:
+Here are the main topics discussed:
 
 * There are significant differences between indoor and outdoor venues: while outdoors there is a lot of dispersion, indoors reflexions predominate. Besides, smaller indoor venues do not behave the same way as bigger ones; it is also important to understand how much the room reverberates.
 * Larger venues may require multiple rows of speakers facing the audience (one closer to the stage and another in the middle of the room, for example), in order to guarantee that the sound reaches everyone. Some probems may appear due to these multiple rows. In particular, there could be areas where either phase cancellation or phase superposition can occur. When this happens, sound technicians have to compensate speaker delays.
@@ -18,4 +18,4 @@ Here are the main topics we discussed:
 * Unless sound technicians are not comfortable with the venue and equipment they are working with, it is not common for them to leave the regie, both before and during the show.
 * During the show, slight adjustments can be made, in order to compensate for the presence of people (which has an impact on the propagation of sound in the room), but not much more than that.
 
-> Considering this, we decided to focus on indoor venues, since they provide more controlled environments and it is easier for us to conduct tests in similar conditions (we have access to facilities and equipment provided by our partner, XLR).
+> Considering this, the team decided to focus on indoor venues, since they provide more controlled environments and it is easier for us to conduct tests in similar conditions (we have access to facilities and equipment provided by our partner, XLR).

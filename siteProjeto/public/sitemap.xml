@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<<<<<<< HEAD
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
@@ -40,3 +41,15 @@
     <loc>http://localhost:44779/ist1102943/tags/</loc>
   </url>
 </urlset>
+=======
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <sitemap>
+    <loc>https://web.tecnico.ulisboa.pt/ist1102943/en/sitemap.xml</loc>
+    
+      <lastmod>2024-04-05T22:00:00+06:00</lastmod>
+    
+  </sitemap>
+  
+</sitemapindex>
+>>>>>>> ce6ed2f (Blog até semana 7 (falta decisões tomadas))

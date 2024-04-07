@@ -6,4 +6,6 @@ image: images/blog/coding.jpg
 author: SSM Team
 description: "This is meta description"
 ---
-> Beginning of the development of the Smart Sound Monitoring website.
+> Nuno Jorge began the development of the Smart Sound Monitoring website, using the Meghna theme, distributed by HUGO.
+ 
+The current challenge is learning how to actually modify the default settings and content; we need to understand the structure of the website and the role of each directory inside the meghna-hugo folder.

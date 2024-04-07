@@ -6,4 +6,4 @@ image: images/blog/hello_world.jpg
 author: SSM Team
 description: "This is meta description"
 ---
-> The Smart Sound Monitoring website is officially up and running. Essential information and features are both available and functional.
+> Nuno Jorge launched the Smart Sound Monitoring website on the IST server; it is officially up and running. Essential information and features are both available and functional.

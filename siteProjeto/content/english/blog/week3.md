@@ -1,13 +1,13 @@
 ---
 title: "Week 3"
 date: 2024-03-08T22:00:00+06:00
-image_webp: images/blog/ArrayCalc.webp
-image: images/blog/ArrayCalc.jpg
+image_webp: images/blog/interviews.webp
+image: images/blog/interviews.jpg
 author: SSM Team
 description: "This is meta description"
 ---
 
-This week we had the opportunity to interview sound technicias who work for Watt-Light, the company that was hired by the Electrical and Computer Engineering student team for their anual event. The main focus of the conversation was the software they are currently using; we learned that there are features which can be improved.
+This week, Pedro Martins interviewd sound technicias who work for Watt-Light, the company that was hired by the Electrical and Computer Engineering student team for their anual event. The main focus of the conversation was the software they are currently using; Pedro learned that there are features which can be improved.
 
 The process of analyzing space and planning the PA (Public Address) system involves using software such as d&b ArrayCalc for 3D space dimensioning, considering parameters like air temperature and material properties. The software is a comprehensive tool for acoustical project design, performance prediction, alignment, assembly, and safety parameters.
 Additionally, the d&b NoizCalc software is used to simulate how sound will propagate for a specific PA. It utilizes data from the d&b ArrayCalc simulation, creating a noise gridmap for outdoor events.
