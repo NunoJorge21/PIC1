@@ -2,17 +2,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Smart Sound Monitoring</title>
-    <link>http://localhost:44779/ist1102943/</link>
+    <link>https://web.tecnico.ulisboa.pt/ist1102943/</link>
     <description>Recent content on Smart Sound Monitoring</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-<<<<<<< HEAD
-    <lastBuildDate>Fri, 29 Mar 2024 22:00:00 +0600</lastBuildDate>
-    <atom:link href="http://localhost:44779/ist1102943/index.xml" rel="self" type="application/rss+xml" />
-=======
     <lastBuildDate>Fri, 05 Apr 2024 22:00:00 +0600</lastBuildDate>
     <atom:link href="https://web.tecnico.ulisboa.pt/ist1102943/index.xml" rel="self" type="application/rss+xml" />
->>>>>>> ce6ed2f (Blog até semana 7 (falta decisões tomadas))
     <item>
       <title>Week 7</title>
       <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/week7/</link>
@@ -22,100 +17,65 @@
     </item>
     <item>
       <title>Week 6</title>
-      <link>http://localhost:44779/ist1102943/blog/week6/</link>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/week6/</link>
       <pubDate>Fri, 29 Mar 2024 22:00:00 +0600</pubDate>
-<<<<<<< HEAD
-      <guid>http://localhost:44779/ist1102943/blog/week6/</guid>
-      <description>In the 3rd meeting with our project assistant, we confirmed the necessary features for the intermediate delivery, namely the acquisition of pure sinusoids and its representation in both time and frequency domains.</description>
-=======
       <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/week6/</guid>
       <description>In the 3rd meeting with our project assistant, we confirmed the necessary features for the intermediate delivery - namely the acquisition of pure sinusoids and its representation in both time and frequency domains.</description>
->>>>>>> ce6ed2f (Blog até semana 7 (falta decisões tomadas))
     </item>
     <item>
       <title>Week 5</title>
-      <link>http://localhost:44779/ist1102943/blog/week5/</link>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/week5/</link>
       <pubDate>Fri, 22 Mar 2024 22:00:00 +0600</pubDate>
-<<<<<<< HEAD
-      <guid>http://localhost:44779/ist1102943/blog/week5/</guid>
-      <description>In the 5th week of the project we began working on the Arduino Nano RP2040.</description>
-=======
       <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/week5/</guid>
       <description>In the 5th week of the project, Gonçalo Lázaro began working on the Arduino Nano RP2040.</description>
->>>>>>> ce6ed2f (Blog até semana 7 (falta decisões tomadas))
     </item>
     <item>
       <title>Week 4</title>
-      <link>http://localhost:44779/ist1102943/blog/week4/</link>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/week4/</link>
       <pubDate>Fri, 15 Mar 2024 22:00:00 +0600</pubDate>
-<<<<<<< HEAD
-      <guid>http://localhost:44779/ist1102943/blog/week4/</guid>
-      <description>In the 4th week of the project we met with our project assistent, Professor Rafael Cordeiro, to discuss the goals for the intermediate delivery of April 1st.</description>
-=======
       <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/week4/</guid>
       <description>In the 4th week of the project, we met with our project assistant, Professor Rafael Cordeiro, to discuss the goals for the intermediate delivery of April 1st.</description>
->>>>>>> ce6ed2f (Blog até semana 7 (falta decisões tomadas))
     </item>
     <item>
       <title>Week 3</title>
-      <link>http://localhost:44779/ist1102943/blog/week3/</link>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/week3/</link>
       <pubDate>Fri, 08 Mar 2024 22:00:00 +0600</pubDate>
-<<<<<<< HEAD
-      <guid>http://localhost:44779/ist1102943/blog/week3/</guid>
-      <description>This week we had the opportunity to interview sound technicias who work for Watt-Light, the company that was hired by the Electrical and Computer Engineering student team for their anual event.</description>
-=======
       <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/week3/</guid>
       <description>This week, Pedro Martins interviewd sound technicias who work for Watt-Light, the company that was hired by the Electrical and Computer Engineering student team for their anual event.</description>
->>>>>>> ce6ed2f (Blog até semana 7 (falta decisões tomadas))
     </item>
     <item>
       <title>Weeks 1 and 2</title>
-      <link>http://localhost:44779/ist1102943/blog/weeks1_2/</link>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/weeks1_2/</link>
       <pubDate>Fri, 01 Mar 2024 22:00:00 +0600</pubDate>
-<<<<<<< HEAD
-      <guid>http://localhost:44779/ist1102943/blog/weeks1_2/</guid>
-      <description>In the first two weeks we had the opportunity to interview sound professionals and possible Smart Sound Monitoring clients.</description>
-=======
       <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/weeks1_2/</guid>
       <description>In the first two weeks, Frederico Paula and Nuno Jorge interviewd sound professionals and possible Smart Sound Monitoring clients.</description>
->>>>>>> ce6ed2f (Blog até semana 7 (falta decisões tomadas))
     </item>
     <item>
       <title>Hello, World!</title>
-      <link>http://localhost:44779/ist1102943/blog/hello_world/</link>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/hello_world/</link>
       <pubDate>Sun, 18 Feb 2024 22:00:00 +0600</pubDate>
-<<<<<<< HEAD
-      <guid>http://localhost:44779/ist1102943/blog/hello_world/</guid>
-      <description>The Smart Sound Monitoring website is officially up and running. Essential information and features are both available and functional.</description>
-=======
       <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/hello_world/</guid>
       <description>Nuno Jorge launched the Smart Sound Monitoring website on the IST server; it is officially up and running.</description>
->>>>>>> ce6ed2f (Blog até semana 7 (falta decisões tomadas))
     </item>
     <item>
       <title>Website Development</title>
-      <link>http://localhost:44779/ist1102943/blog/web_dev/</link>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/web_dev/</link>
       <pubDate>Sun, 18 Feb 2024 22:00:00 +0600</pubDate>
-<<<<<<< HEAD
-      <guid>http://localhost:44779/ist1102943/blog/web_dev/</guid>
-      <description>Beginning of the development of the Smart Sound Monitoring website.</description>
-=======
       <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/web_dev/</guid>
       <description>Nuno Jorge began the development of the Smart Sound Monitoring website, using the Meghna theme, distributed by HUGO.</description>
->>>>>>> ce6ed2f (Blog até semana 7 (falta decisões tomadas))
     </item>
     <item>
       <title>John Doe</title>
-      <link>http://localhost:44779/ist1102943/author/john-doe/</link>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/author/john-doe/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:44779/ist1102943/author/john-doe/</guid>
+      <guid>https://web.tecnico.ulisboa.pt/ist1102943/author/john-doe/</guid>
       <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet vulputate augue. Duis auctor lacus id vehicula gravida.</description>
     </item>
     <item>
       <title>Mark Dinn</title>
-      <link>http://localhost:44779/ist1102943/author/mark-dinn/</link>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/author/mark-dinn/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:44779/ist1102943/author/mark-dinn/</guid>
+      <guid>https://web.tecnico.ulisboa.pt/ist1102943/author/mark-dinn/</guid>
       <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet vulputate augue. Duis auctor lacus id vehicula gravida.</description>
     </item>
   </channel>
