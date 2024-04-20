@@ -6,8 +6,15 @@
     <description>Recent content in Blogs on Smart Sound Monitoring</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 12 Apr 2024 22:00:00 +0600</lastBuildDate>
+    <lastBuildDate>Fri, 19 Apr 2024 22:00:00 +0600</lastBuildDate>
     <atom:link href="https://web.tecnico.ulisboa.pt/ist1102943/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Week 9</title>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/week9/</link>
+      <pubDate>Fri, 19 Apr 2024 22:00:00 +0600</pubDate>
+      <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/week9/</guid>
+      <description>This week, we have made some necessary preparations to start working with the BLE beacons. After reading Rita Abreu Martinho&amp;rsquo;s Master&amp;rsquo;s thesis on IIoT for Lean Production Systems - where she also used BLE beacons for the localization - and revisiting, now with a deeper understanding of the subject, documentation regarding these devices and the Arduino Nano RP2040 microcontroller board, we were able to outline various aspects worth taking into account while developing the prototype:</description>
+    </item>
     <item>
       <title>Week 8</title>
       <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/week8/</link>
