@@ -2,10 +2,9 @@
 #include <PDM.h>
 
 #define BUTTON_PIN 10
+#define NSAMP 10000 //130000 at 44kHz, 40000 at 16kHz //numero de amostras
 
 //Inicialização de variáveis
-
-bool startLoop = false;
 
 bool LED_SWITCH = false; //Booleana para controlar o led 
 
@@ -17,6 +16,8 @@ static const int frequency = 25000; // frequência de amostragem (PCM output) 16
 short sampleBuffer[512]; // Buffer to armazenar as amostras, cada uma de 16 bits
 
 int samplesRead; // Numero de amostras lidas
+
+short sampled[NSAMP];
 
 int readcounter = 0;
 
@@ -55,35 +56,29 @@ void setup() {
   }
 }
 
-//Loop
 void loop() {
 
   if (digitalRead(BUTTON_PIN) == HIGH ) {
-    startLoop = true;
-    delay(500); //avoid repeating the loop multiple times because of how long the button is pressed for
     readcounter = 0;
-    Serial.println("start");
-  }
-
-
-  if (samplesRead && startLoop) {
-
-    // Fazer print das amostras no serial plotter/monitor
-    for (int i = 0; i < samplesRead && startLoop == true; i++) {
-      if (channels != 1) {
-        Serial.print("Erro");
-      }
-
-      Serial.println(sampleBuffer[i]);
-      if (readcounter >= 10000) {  //130000 at 44kHz, 40000 at 16kHz
-        startLoop = false;
-        Serial.println("finish");
-      }
+    Serial.println("start of while...");
+    while(readcounter <= NSAMP){
+      for (int i = 0; i < samplesRead; i++) {
+      //Serial.println(sampleBuffer[i]);
+      // readcounter++;
+      sampled[readcounter] = sampleBuffer[i];
+      //Serial.println(sampled[readcounter]);
+      Serial.println("lego");
       readcounter++;
+      }
+      // Recomeçar a contagem
+      samplesRead = 0;
     }
-
-    // Recomeçar a contagem
-    samplesRead = 0;
+    Serial.println("start");
+    for(int i = 1; i <= NSAMP; i++ ){
+      Serial.println(sampled[i]);
+    } 
+    Serial.println("finish");
   }
+
 }
    

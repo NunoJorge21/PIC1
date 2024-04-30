@@ -8,5 +8,9 @@ WIFININA
 PDM
 
 
-python biblios:
+python3 biblios:
+sudo apt install python3-pip (pip para instalar biblios)
+pip install pyserial
+pip install numpy
+pip install matplotlib
 
