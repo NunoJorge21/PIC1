@@ -1,5 +1,6 @@
 
 Arduino Mbed OS Nano Boards
+terminar instalação desta biblio: .arduino15/packages/arduino/hardware/mbed_nano/4.1.1/post_install.sh (correr este ficheiro as root)
 arduino board: Arduino Nano RP2040 Connect
 
 arduino biblios:
