@@ -1,0 +1,11 @@
+
+Arduino Mbed OS Nano Boards
+arduino board: Arduino Nano RP2040 Connect
+
+arduino biblios:
+WIFININA
+PDM
+
+
+python biblios:
+
