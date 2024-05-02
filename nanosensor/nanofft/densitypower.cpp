@@ -26,8 +26,8 @@ int main(){
             X[i] += sampled[k]*(cos((2*M_PI*k*i)/NSAMP) - j*sin((2*M_PI*k*i)/NSAMP));
         }
         //F[j] = res*j;
-        if(j == 0 || j == NF - 1) S[j] = pow(complexAbs(X[j])/NSAMP, 2);
-        else S[j] = 2*pow(complexAbs(X[j])/NSAMP,2);
+        if(i == 0 || i == NF - 1) S[i] = pow(complexAbs(X[i])/NSAMP, 2);
+        else S[i] = 2*pow(complexAbs(X[i])/NSAMP,2);
     }
 
     return 0;
