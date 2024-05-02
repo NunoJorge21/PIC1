@@ -25,6 +25,13 @@ fig = px.scatter_mapbox(df,
                         title = 'Sound Monitoring Scatter Map')
 
 fig.update_layout(mapbox_style='open-street-map')
+
+# Carto Positron: carto-positron
+# Carto Dark Matter: carto-darkmatter
+# Stamen Terrain: stamen-terrain
+# Stamen Toner: stamen-toner
+# Stamen Watercolor: stamen-watercolor
+
 fig.update_layout(margin={'r':0, 't':50, 'l':0, 'b':10})
 fig.show()
 
