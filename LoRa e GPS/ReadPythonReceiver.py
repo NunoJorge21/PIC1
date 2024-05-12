@@ -2,10 +2,27 @@ import serial
 import time
 import numpy as np
 import matplotlib.pyplot as p
+import re
 
-NSAMP = 10000
-NF = 5000
+NSAMP = 2048
+NF = 1024
 
+def sscanf(string, format_string):
+    pattern = format_string.replace('%d', r'(\d+)').replace('%f', r'(\d+\.\d+)').replace('%s', r'(\S+)')
+    match = re.match(pattern, string)
+    if match:
+        return match.groups()
+
+
+
+def ReadLine(string):
+    i = 1
+    data = sscanf(string, "%s %d %d %d %d")
+    if data is not None and data[0] == "sent:":
+        for i in range(1,5):
+            S.append(int(data[i]))
+    
+    
 def ReadStuff():
     lat = 0
     lng = 0
@@ -24,14 +41,17 @@ def ReadStuff():
             print("finished reading")
             break
 
-        S.append(float(line))
+        ReadLine(line)
         F.append(res*i)
-        i = i + 1
+        F.append(res*(i+1))
+        F.append(res*(i+2))
+        F.append(res*(i+3))
+        i = i + 4
 
-    lat = S.pop(NF)
-    lng = S.pop(NF+1)
-    F.pop(NF)
-    F.pop(NF+1)
+    #lat = S.pop(NF)
+    #lng = S.pop(NF+1)
+    #F.pop(NF)
+    #F.pop(NF+1)
 
     # Unilateral power spectrum
     S_dB = 10*np.log10(S)
@@ -48,7 +68,7 @@ def ReadStuff():
 
     #Plot Information
     p.title('Power Spectrum')
-    p.suptitle(f'Latitude : {lat:.7f} Longitude: {lng:.7f}')
+    #p.suptitle(f'Latitude : {lat:.7f} Longitude: {lng:.7f}')
     p.xlabel('Frequency [Hz]')
     p.ylabel('Power [W]') #Unidades Lineares
     #p.ylabel('Power [dBW]') #Unidades logarítmicas
@@ -64,7 +84,7 @@ def ReadStuff():
 F = [] #Frequency vector
 S = [] #Power Spectrum
 
-ser = serial.Serial("/dev/ttyACM0",9600,timeout=100)
+ser = serial.Serial('COM3',9600,timeout=100)
 time.sleep(2)
 
 while(1):
