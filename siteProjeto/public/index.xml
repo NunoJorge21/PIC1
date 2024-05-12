@@ -6,21 +6,28 @@
     <description>Recent content on Smart Sound Monitoring</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 26 Apr 2024 22:00:00 +0600</lastBuildDate>
+    <lastBuildDate>Fri, 10 May 2024 22:00:00 +0600</lastBuildDate>
     <atom:link href="https://web.tecnico.ulisboa.pt/ist1102943/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Week 12</title>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/week12/</link>
+      <pubDate>Fri, 10 May 2024 22:00:00 +0600</pubDate>
+      <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/week12/</guid>
+      <description>This week has been dedicated to the study and implementation of the communications protocol. The primary objective is to establish a reliable data transmission from the Arduino Nano RP2040 to a gateway, facilitated by a WEMOS D1 mini directly connected to the computer.</description>
+    </item>
+    <item>
+      <title>Week 11</title>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/week11/</link>
+      <pubDate>Fri, 03 May 2024 22:00:00 +0600</pubDate>
+      <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/week11/</guid>
+      <description>This week, our Smart Sound Monitoring project witnessed significant developments as we navigated through crucial decisions and operational adjustments.</description>
+    </item>
     <item>
       <title>Week 10</title>
       <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/week10/</link>
       <pubDate>Fri, 26 Apr 2024 22:00:00 +0600</pubDate>
       <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/week10/</guid>
-      <description>In this week, as suggested by Prof. Luís Caldas, we began by discussing the spatial localization of the prototype using BLE Beacons with the responsible individuals at IStartLab.</description>
-    </item>
-    <item>
-      <title>Week 10</title>
-      <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/week11/</link>
-      <pubDate>Fri, 26 Apr 2024 22:00:00 +0600</pubDate>
-      <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/week11/</guid>
-      <description>This week, our Smart Sound Monitoring project witnessed significant developments as we navigated through crucial decisions and operational adjustments.</description>
+      <description>This week, as suggested by Prof. Luís Caldas, we discussed the spatial localization of the prototype using BLE Beacons with the responsible individuals at IStartLab.</description>
     </item>
     <item>
       <title>Week 9</title>
