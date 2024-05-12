@@ -220,7 +220,7 @@ void LoRaSend(int* data){
   Serial.println("Sending data");
   LoRaHeader(1);
   for(int i = 0; i < NF; i = i + 4){
-    sprintf(message, "sent: %d %d %d %d", data[i], data[i+1], data[i+2], data[i+3]); //Tem que ser múltiplo de 2
+    sprintf(message, "sent: %d %d %d %d", data[i], data[i+1], data[i+2], data[i+3]); //Tem que ser potência de 2
     if(LoRa.beginPacket()){
       
       LoRa.print(message);
