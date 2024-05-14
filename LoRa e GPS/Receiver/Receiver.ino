@@ -37,10 +37,10 @@ void loop() {
     while(LoRa.available()){
       received = (char)LoRa.read();
       strncat(message,&received,1);
+      
     }
     
     Serial.println(message);
   }
   
-
 }
