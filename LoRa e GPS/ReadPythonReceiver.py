@@ -84,7 +84,8 @@ def ReadStuff():
 F = [] #Frequency vector
 S = [] #Power Spectrum
 
-ser = serial.Serial('COM3',9600,timeout=100)
+# ser = serial.Serial('COM3',9600,timeout=100)
+ser = serial.Serial('/dev/ttyUSB0',9600,timeout=100)
 time.sleep(2)
 
 while(1):

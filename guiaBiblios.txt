@@ -1,12 +1,18 @@
 
 Arduino Mbed OS Nano Boards
-terminar instalação desta biblio: .arduino15/packages/arduino/hardware/mbed_nano/4.1.1/post_install.sh (correr este ficheiro as root)
+terminar instalação desta biblio(linux): .arduino15/packages/arduino/hardware/mbed_nano/4.1.1/post_install.sh (correr este ficheiro as root)
 arduino board: Arduino Nano RP2040 Connect
 
-arduino biblios:
+arduino nano biblios:
+for sampling:
 WIFININA
 PDM
+for LoRa:
+LoRa by Sandeep Mistry
 
+gateway:
+Board: Wemos D1 R2 & mini
+LoRa by Sandeep Mistry
 
 python3 biblios:
 sudo apt install python3-pip (pip para instalar biblios)

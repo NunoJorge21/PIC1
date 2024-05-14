@@ -224,6 +224,7 @@ void LoRaSend(int* data){
     if(LoRa.beginPacket()){
       
       LoRa.print(message);
+      Serial.println(message);//debug
       LoRa.endPacket();
     }
     else{
@@ -362,7 +363,6 @@ void loop() {
     //SendToComputer(X);
     LoRaSend(X);
     
-    delay(1000);
     Serial.println("Completed my task");
   }
 
