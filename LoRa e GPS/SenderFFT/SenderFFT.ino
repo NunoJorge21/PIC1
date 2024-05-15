@@ -185,7 +185,7 @@ float FFT(short int in[], float Frequency){
   }
   Serial.println("Fourier Transform calculated.");
   for(int i = 0; i < NF; i++)
-    X[i] = round(out_r[i]);
+    X[i] = round(200*log10(out_r[i]));;
 }
 
 //Process PDM data
