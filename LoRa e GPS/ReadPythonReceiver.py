@@ -21,6 +21,7 @@ def ReadLine(string):
     if data is not None and data[0] == "sent:":
         for i in range(1,5):
             S.append(int(data[i]))
+            S_dB.append(float(data[i])/10)
     
     
 def ReadStuff():
@@ -54,16 +55,15 @@ def ReadStuff():
     #F.pop(NF+1)
 
     # Unilateral power spectrum
-    S_dB = 10*np.log10(S)
-
+    #S_dB = 10*np.log10(S)
     #Plots
     p.figure(1, figsize=(10, 6)) #Tamanho customizável
 
 
     #Plot options
-    p.plot(F, S) #Unidades lineares
+    #p.plot(F, S) #Unidades lineares
     #p.semilogx(F,S) #Por década, Unidades lineares
-    #p.plot(F, S_dB) #Unidades logarítmicas
+    p.plot(F, S_dB) #Unidades logarítmicas
     #p.semilogx(F,S_dB) #Por década, logarítmicas
 
     #Plot Information
@@ -83,6 +83,7 @@ def ReadStuff():
 #Data Vector
 F = [] #Frequency vector
 S = [] #Power Spectrum
+S_dB = [] #Power Spectrum
 
 # ser = serial.Serial('COM3',9600,timeout=100)
 ser = serial.Serial('/dev/ttyUSB0',9600,timeout=100)
