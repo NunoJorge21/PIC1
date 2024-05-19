@@ -9,6 +9,8 @@
 int counter = 0;
 int sent[NF];
 char message[50];
+unsigned long t1;
+unsigned long t2;
 
 // Function to initialize LoRa
 void LoRaInit() {
@@ -76,6 +78,16 @@ void LoRaSend(){
     Serial.println(msg);//debug
     LoRa.endPacket();
   }
+  if(LoRa.beginPacket()){
+    LoRa.print(msg);
+    Serial.println(msg);//debug
+    LoRa.endPacket();
+  }
+  if(LoRa.beginPacket()){
+    LoRa.print(msg);
+    Serial.println(msg);//debug
+    LoRa.endPacket();
+  }
   else{
     Serial.print("ERROR. Couldn't send data through LoRa.");
     while(1);
@@ -99,34 +111,27 @@ void loop() {
     if(strcmp(message, "start")==0){
       counter = 0;
       Serial.println("starting to read");
-      while(1){
+      while(counter < NF){ 
         int packetSize = LoRa.parsePacket();
         if (packetSize) {
-        int index = 0;
+          int index = 0;
           while (LoRa.available() && index < sizeof(message) - 1) {
             message[index++] = (char)LoRa.read();  
           }
           message[index] = '\0';
-          if (isValidMessage(message)) {
-            //Serial.println(message);
-          } else {
+
+          if (!isValidMessage(message)) {
             sprintf(message, "S: %d %d %d %d", 0, 0, 0, 0);
-            //Serial.println(message);
           }
           if (strcmp(message, "start") != 0 && strcmp(message, "finish") != 0){
             sscanf(message, "S: %d %d %d %d", &sent[counter], &sent[counter+1], &sent[counter+2], &sent[counter+3]);
             counter=counter+4;
           }
-          //delay(10);
           Serial.println(counter);
-          if(counter == NF){
-            break;
-          }
         }
       }
-      delay(100);
+      delay(1000);
       LoRaSend();
-      Serial.println("acabouuu");
       
       int i = 0;
       counter = 0;
