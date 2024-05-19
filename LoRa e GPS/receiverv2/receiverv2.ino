@@ -4,7 +4,10 @@
 #define SS 15
 #define RST 2
 #define DIO 4
+#define NF 1024 //number of samples
 
+int counter = 0;
+int sent[NF];
 char message[50];
 
 // Function to initialize LoRa
@@ -20,15 +23,15 @@ void LoRaInit() {
   LoRa.setCodingRate4(5);           // Set coding rate to CR4/5
 }
 
-// Function to check if the message matches the "sent: num num num num" pattern
+// Function to check if the message matches the "S: num num num num" pattern
 bool isValidMessage(const char* msg) {
   // Check for "start" or "finish" messages
   if (strcmp(msg, "start") == 0 || strcmp(msg, "finish") == 0) {
     return true;
   }
   
-  // Check for the "sent:" prefix
-  if (strncmp(msg, "sent:", 5) != 0) {
+  // Check for the "S:" prefix
+  if (strncmp(msg, "S:", 2) != 0) {
     return false;
   }
   // Move the pointer to the start of the numbers
@@ -67,22 +70,74 @@ void setup() {
   LoRaInit();
 }
 
+//Sends data through LoRa
+void LoRaSend(char* message){
+  Serial.println("Sending data");
+
+  if(LoRa.beginPacket()){
+    
+    LoRa.print(message);
+    Serial.println(message);//debug
+    LoRa.endPacket();
+  }
+  else{
+    Serial.print("ERROR. Couldn't send data through LoRa.");
+    while(1);
+  }
+  delay(20);
+
+}
+
 void loop() {
   int packetSize = LoRa.parsePacket();
   if (packetSize) {
     int index = 0;
     while (LoRa.available() && index < sizeof(message) - 1) {
-      message[index++] = (char)LoRa.read();
+      message[index++] = (char)LoRa.read();  
     }
     message[index] = '\0';
-    
-    if (isValidMessage(message)) {
-      Serial.println(message);
-    } else {
-      //Serial.print("Invalid message received:");
-      //Serial.println(message);
-      sprintf(message, "sent: %d %d %d %d", 0, 0, 0, 0);
-      Serial.println(message);
+    if(strcmp(message, "start")==0){
+      counter = 0;
+      while(1){
+        int packetSize = LoRa.parsePacket();
+        if (packetSize) {
+        int index = 0;
+          while (LoRa.available() && index < sizeof(message) - 1) {
+            message[index++] = (char)LoRa.read();  
+          }
+          message[index] = '\0';
+          if (isValidMessage(message)) {
+            //Serial.println(message);
+          } else {
+            sprintf(message, "S: %d %d %d %d", 0, 0, 0, 0);
+            //Serial.println(message);
+          }
+          if (strcmp(message, "start") != 0 && strcmp(message, "finish") != 0){
+            sscanf(message, "S: %d %d %d %d", &sent[counter], &sent[counter+1], &sent[counter+2], &sent[counter+3]);
+            counter=counter+4;
+          }
+          //delay(10);
+          Serial.println(counter);
+          if(counter == NF){
+            LoRaSend("received");
+            break;
+          }
+        }
+      }
+      Serial.println("acbaouuu");
+      int i = 0;
+      counter = 0;
+      Serial.println("start");
+      while(i < NF/4){
+        //Serial.println(sent[i]);
+        sprintf(message, "S: %d %d %d %d", sent[counter], sent[counter+1], sent[counter+2], sent[counter+3]);
+        Serial.println(message);
+        counter = counter+4;
+        i++;
+      }
+      Serial.println("finish");
     }
   }
+  
+  
 }

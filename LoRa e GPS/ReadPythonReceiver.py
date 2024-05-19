@@ -18,7 +18,7 @@ def sscanf(string, format_string):
 def ReadLine(string):
     i = 1
     data = sscanf(string, "%s %d %d %d %d")
-    if data is not None and data[0] == "sent:":
+    if data is not None and data[0] == "S:":
         for i in range(1,5):
             S.append(int(data[i]))
             S_dB.append(float(data[i])/10)
@@ -29,6 +29,7 @@ def ReadStuff():
     lng = 0
     F.clear()
     S.clear()
+    S_dB.clear()
     fs = 25000  #sampling freq same as arduino
     res = fs/NSAMP
     i = 0
@@ -59,6 +60,11 @@ def ReadStuff():
     #Plots
     p.figure(1, figsize=(10, 6)) #Tamanho customizável
 
+    if len(S) != NF:
+        #fill rest of the array with zeros
+        for i in range(len(S), NF):
+            S.append(0)
+            S_dB.append(0)
 
     #Plot options
     #p.plot(F, S) #Unidades lineares
