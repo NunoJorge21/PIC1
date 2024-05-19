@@ -139,7 +139,7 @@ void loop() {
       while(i < NF/4){
         //Serial.println(sent[i]);
         sprintf(message, "S: %d %d %d %d", sent[counter], sent[counter+1], sent[counter+2], sent[counter+3]);
-        //Serial.println(message);
+        Serial.println(message);
         counter = counter+4;
         i++;
       }
