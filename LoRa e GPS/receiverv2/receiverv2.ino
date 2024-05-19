@@ -65,19 +65,15 @@ bool isValidMessage(const char* msg) {
   return *msg == '\0';
 }
 
-void setup() {
-  Serial.begin(9600);
-  LoRaInit();
-}
-
 //Sends data through LoRa
-void LoRaSend(char* message){
+void LoRaSend(){
+  char msg[50];
+  strcpy(msg,"received");
   Serial.println("Sending data");
 
   if(LoRa.beginPacket()){
-    
-    LoRa.print(message);
-    Serial.println(message);//debug
+    LoRa.print(msg);
+    Serial.println(msg);//debug
     LoRa.endPacket();
   }
   else{
@@ -85,7 +81,11 @@ void LoRaSend(char* message){
     while(1);
   }
   delay(20);
+}
 
+void setup() {
+  Serial.begin(9600);
+  LoRaInit();
 }
 
 void loop() {
@@ -98,6 +98,7 @@ void loop() {
     message[index] = '\0';
     if(strcmp(message, "start")==0){
       counter = 0;
+      Serial.println("starting to read");
       while(1){
         int packetSize = LoRa.parsePacket();
         if (packetSize) {
@@ -119,19 +120,21 @@ void loop() {
           //delay(10);
           Serial.println(counter);
           if(counter == NF){
-            LoRaSend("received");
             break;
           }
         }
       }
-      Serial.println("acbaouuu");
+      delay(100);
+      LoRaSend();
+      Serial.println("acabouuu");
+      
       int i = 0;
       counter = 0;
       Serial.println("start");
       while(i < NF/4){
         //Serial.println(sent[i]);
         sprintf(message, "S: %d %d %d %d", sent[counter], sent[counter+1], sent[counter+2], sent[counter+3]);
-        Serial.println(message);
+        //Serial.println(message);
         counter = counter+4;
         i++;
       }
