@@ -5,6 +5,8 @@
 #include <SPI.h>
 
 #define BUTTON_PIN 10
+#define TS_LED 4//Transmission Sucess LED
+#define RE_LED 5 //Recording LED
 #define SS 9
 #define RST 8
 #define DIO 7
@@ -220,11 +222,11 @@ void LoRaSend(int* data){
   Serial.println("Sending data");
   LoRaHeader(1);
   for(int i = 0; i < NF; i = i + 4){
-    sprintf(message, "sent: %d %d %d %d", data[i], data[i+1], data[i+2], data[i+3]); //Tem que ser potência de 2
+    sprintf(message, "S: %d %d %d %d", data[i], data[i+1], data[i+2], data[i+3]); //Tem que ser potência de 2
     if(LoRa.beginPacket()){
       
       LoRa.print(message);
-      Serial.println(message);//debug
+      //Serial.println(message);//debug
       LoRa.endPacket();
     }
     else{
@@ -234,11 +236,33 @@ void LoRaSend(int* data){
     delay(20);
   }
   LoRaHeader(0);
+  digitalWrite(RE_LED, LOW);
+}
+
+void LoRaReceive(){
+  char message[50];
+  int packetSize = LoRa.parsePacket();
+  if (packetSize) {
+    int index = 0;
+    while (LoRa.available() && index < sizeof(message) - 1) {
+      message[index++] = (char)LoRa.read();  
+    }
+    message[index] = '\0';
+    Serial.println(message);
+    if(strcmp(message, "received") == 0) {
+      digitalWrite(TS_LED, HIGH);
+      delay(300);
+      digitalWrite(TS_LED, LOW);
+      delay(100);
+      digitalWrite(TS_LED, HIGH);
+      delay(300);
+      digitalWrite(TS_LED, LOW);
+    }
+  }
 }
 
 //Adds header to LoRa information
-void LoRaHeader(bool a)
-{
+void LoRaHeader(bool a){
   char message[40];
   if(a == true)
   {
@@ -272,6 +296,7 @@ void LoRaHeader(bool a)
 //Gets samples and copies it to samples vector
 void GetSamples(){
   Serial.println("Obtaining samples");
+  digitalWrite(RE_LED, HIGH);
   readcounter = 0;
   while(readcounter < NSAMP){
     for (int i = 0; i < samplesRead; i++) {
@@ -344,6 +369,8 @@ void setup() {
   //PINS
   pinMode(LEDB, OUTPUT);
   pinMode(BUTTON_PIN, INPUT);
+  pinMode(TS_LED, OUTPUT);
+  pinMode(RE_LED, OUTPUT);
 
   while (!Serial);
   //Starting protocols
@@ -353,18 +380,16 @@ void setup() {
 }
 
 void loop() {
-
+  
   if (digitalRead(BUTTON_PIN) == HIGH ) {
 
     GetSamples();
     //GetGPS(); [Work in progress]
     
     FFT(sampled, frequency);
-    //SendToComputer(X);
     LoRaSend(X);
-    
     Serial.println("Completed my task");
   }
-
+  LoRaReceive();
 }
    
