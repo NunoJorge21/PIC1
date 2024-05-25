@@ -354,7 +354,7 @@ void SendToComputer(int* data){
   char message[50];
   Serial.println("start");
   for(int i = 0; i < NF; i = i + 4  ){
-    sprintf(message, "sent: %d %d %d %d", data[i], data[i+1], data[i+2], data[i+3]);
+    sprintf(message, "S: %d %d %d %d", data[i], data[i+1], data[i+2], data[i+3]);
     Serial.println(message);
   } 
   Serial.println("finish");
@@ -372,7 +372,6 @@ void setup() {
   pinMode(TS_LED, OUTPUT);
   pinMode(RE_LED, OUTPUT);
 
-  while (!Serial);
   //Starting protocols
   PDMInit();
   //GPSInit(); [Work in progress]
