@@ -1,63 +1,58 @@
 import tkinter as tk
-from tkinter import simpledialog, messagebox
+from tkinter import messagebox
+import folium
+import webbrowser
+import os
+import threading
 
-class SoundIntensityGrid(tk.Tk):
-    def __init__(self, rows, cols):
-        super().__init__()
+def start_local_server():
+    os.chdir('tiles')
+    os.system('python -m http.server')
 
-        self.rows = rows
-        self.cols = cols
+# Start the local server in a separate thread
+server_thread = threading.Thread(target=start_local_server)
+server_thread.daemon = True
+server_thread.start()
 
-        self.cell_width = 30
-        self.cell_height = 30
+def generate_map(lat, lon):
+    # Create a folium map centered at the given latitude and longitude
+    tile_server = 'http://localhost:8000/{z}/{x}/{y}.png'
+    map_ = folium.Map(location=[lat, lon], zoom_start=13, tiles=tile_server, attr='Local Tiles')
+    folium.Marker([lat, lon], tooltip="Location").add_to(map_)
+    
+    # Save the map to an HTML file
+    map_.save("map.html")
+    
+    # Open the map in the default web browser
+    webbrowser.open("map.html")
 
-        self.canvas_width = self.cols * self.cell_width
-        self.canvas_height = self.rows * self.cell_height
+def submit():
+    try:
+        # Get the input values
+        lat = float(lat_entry.get())
+        lon = float(lon_entry.get())
+        
+        # Generate the map with the provided coordinates
+        generate_map(lat, lon)
+    except ValueError:
+        messagebox.showerror("Invalid input", "Please enter valid numeric values for latitude and longitude")
 
-        self.create_grid()
+# Create the main window
+root = tk.Tk()
+root.title("GPS Coordinates to Map")
 
-    def create_grid(self):
-        self.canvas = tk.Canvas(self, width=self.canvas_width, height=self.canvas_height)
-        self.canvas.pack()
+# Create and place the latitude and longitude entry fields
+tk.Label(root, text="Latitude:").grid(row=0, column=0, padx=10, pady=10)
+lat_entry = tk.Entry(root)
+lat_entry.grid(row=0, column=1, padx=10, pady=10)
 
-        self.intensity_values = [[0] * self.cols for _ in range(self.rows)]
+tk.Label(root, text="Longitude:").grid(row=1, column=0, padx=10, pady=10)
+lon_entry = tk.Entry(root)
+lon_entry.grid(row=1, column=1, padx=10, pady=10)
 
-        for i in range(self.rows):
-            for j in range(self.cols):
-                x1, y1 = j * self.cell_width, i * self.cell_height
-                x2, y2 = x1 + self.cell_width, y1 + self.cell_height
-                self.canvas.create_rectangle(x1, y1, x2, y2, fill="#CCCCCC", outline="")
+# Create and place the submit button
+submit_button = tk.Button(root, text="Generate Map", command=submit)
+submit_button.grid(row=2, columnspan=2, padx=10, pady=10)
 
-        self.canvas.bind("<Button-1>", self.on_canvas_click)
-
-    def on_canvas_click(self, event):
-        col = event.x // self.cell_width
-        row = event.y // self.cell_height
-        self.update_cell_intensity(row, col)
-
-    def update_cell_intensity(self, row, col):
-        value = simpledialog.askinteger("Intensidade de som", f"Insira um valor para a célula ({row+1}, {col+1}):", initialvalue=0)
-        if value is not None:
-            if 0 <= value <= 120:
-                self.intensity_values[row][col] = value
-                self.update_cell_color(row, col)
-            else:
-                messagebox.showerror("Erro", "Valor fora do intervalo permitido (0-120)")
-
-    def update_cell_color(self, row, col):
-        intensity = self.intensity_values[row][col]
-        red = min(int(255 * intensity / 120), 255)
-        blue = min(int(255 * (120 - intensity) / 120), 255)
-        color = f"#{red:02X}00{blue:02X}"
-
-        x1, y1 = col * self.cell_width, row * self.cell_height
-        x2, y2 = x1 + self.cell_width, y1 + self.cell_height
-
-        self.canvas.itemconfig(self.canvas.find_closest((x1 + x2) / 2, (y1 + y2) / 2), fill=color)
-
-if __name__ == "__main__":
-    grid_app = SoundIntensityGrid(rows=10, cols=10)
-    grid_app.geometry("400x400")
-
-    grid_app.mainloop()
-
+# Start the GUI event loop
+root.mainloop()

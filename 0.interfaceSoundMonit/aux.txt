@@ -1,2 +1,0 @@
-#cria o executavel
-pyinstaller --onefile main.py

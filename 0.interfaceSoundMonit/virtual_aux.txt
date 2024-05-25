@@ -1,0 +1,15 @@
+--------------------instalação de ambientes virtuais para python--------------------
+pip install virtualenv        #install virtualenv    #fazes uma vez no pc para instalar o virtualenv
+
+#criar uma pasta que tem os requesitos do ambiente virtual
+virtualenv -p /usr/bin/python3 pic_env  #create virtualenv para python 3.8
+
+source 0.virtual_enviroment/bin/activate  #activate virtualenv    #activas o ambiente virtual para trabalhar sempre
+source ~/Documents/repositorios/SLAM_EKF_Turtlebot3/0.virtual_enviroment/bin/activate
+
+deactivate
+
+pip install -r requirements.txt
+
+code ~/.bashrc
+
