@@ -71,7 +71,8 @@ layout = go.Layout(
         zoom=18,
         style='carto-positron'
     ),
-    margin=dict(r=0, t=50, l=0, b=10)
+    #margin=dict(r=0, t=50, l=0, b=10)
+    margin=dict(r=0, t=0, l=0, b=0)
 )
 
 # Create the figure
