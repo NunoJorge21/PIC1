@@ -85,8 +85,8 @@ void LoRaReceive(){
       message[index++] = (char)LoRa.read();  
     }
     message[index] = '\0';
-    Serial.println(message);
     if(strcmp(message, "received") == 0) {
+      Serial.println(message);
       digitalWrite(TS_LED, HIGH);
       delay(300);
       digitalWrite(TS_LED, LOW);
@@ -232,14 +232,13 @@ void loop() {
     if(GetGPS()){
       Serial.print("got the gps:");
       Serial.println(location);
-      // GetSamples();
+      GetSamples();
       
-      // LoRaSend(sampled);
-      // Serial.println("Completed my task");
+      LoRaSend(sampled);
+      Serial.println("Completed my task");
     }else{delay(1000);}
-    
   }
-  else{}
+
   LoRaReceive();
 }
    
