@@ -63,7 +63,6 @@ void LoRaSend(short int* data){
   for(int i = 0; i < NSAMP; i = i + 4){
     sprintf(message, "S: %d %d %d %d", data[i], data[i+1], data[i+2], data[i+3]); //Tem que ser potência de 2
     if(LoRa.beginPacket()){
-      Serial.println(message);
       LoRa.print(message);
       //Serial.println(message);//debug
       LoRa.endPacket();
@@ -87,8 +86,7 @@ void LoRaReceive(){
       message[index++] = (char)LoRa.read();  
     }
     message[index] = '\0';
-    if(strcmp(message,"received"))
-      Serial.println(message);
+    Serial.println(message);
     if(strcmp(message, "received") == 0) {
       digitalWrite(TS_LED, HIGH);
       delay(300);
@@ -212,7 +210,6 @@ void setup() {
   pinMode(TS_LED, OUTPUT);
   pinMode(RE_LED, OUTPUT);
 
-  while (!Serial);
   //Starting protocols
   PDMInit();
   //GPSInit(); [Work in progress]
@@ -228,7 +225,6 @@ void loop() {
     
     LoRaSend(sampled);
     Serial.println("Completed my task");
-    delay(1000);
   }
   LoRaReceive();
 }
