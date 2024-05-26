@@ -7,43 +7,21 @@ import numpy
 HALF_SAMP_FREQ = 20000 # 20 kHz
 SPECTRAL_RESOLUTION = 10 # Hz
 
-global location_intensity
-global freq_axis
-global frequency_responses
-
-location_intensity = {'Latitude': [], 'Longitude': [], 'Intensity_dB': []}
-
 ###########################
 # !!!!!!!!!!!!!!!!!!!!!!!!!
 # Temos de ter a certeza de que isto é sempre verdade!
 freq_axis = numpy.linspace(0, HALF_SAMP_FREQ, num=int(HALF_SAMP_FREQ/SPECTRAL_RESOLUTION)+1, endpoint=True).tolist()
-frequency_responses = []
-
+y_data = [-170]*2001
+y_data[100] = 20
 
 def getDataFromArduino():
-    latitude = 38.736667
-    longitude = -9.13722
-    freq_data = [-170]*2001
-    freq_data[100] = 20
 
-    frequency_responses.append(freq_data)
-
-    location_intensity['Latitude'].append(latitude)
-    location_intensity['Longitude'].append(longitude)
-    location_intensity['Intensity_dB'].append(max(freq_data)) # consider maximum intensity
-    
-    return pd.DataFrame(location_intensity)
+    data = {'Latitude': [38.736667, 38.736944, 38.736944, 38.736667], 
+            'Longitude': [-9.137222, -9.137222, -9.138333, -9.138333],
+            'Intensity_dB': [120, 120, 30, 30]}
+    return pd.DataFrame(data)
 
 df = getDataFromArduino()
-
-# Custom colorscale
-custom_colorscale = [
-    [0, 'green'],        # 0% corresponds to green
-    [0.25, 'limegreen'], # 25% - lighter green
-    [0.5, 'yellow'],     # 50% - yellow
-    [0.75, 'orange'],    # 75% - orange
-    [1, 'red']           # 100% corresponds to red
-]
 
 # Create a scattermapbox trace
 trace = go.Scattermapbox(
@@ -54,13 +32,13 @@ trace = go.Scattermapbox(
         size=20,
         color=df['Intensity_dB'],
         opacity=0.8,
-        colorscale=custom_colorscale,
-        showscale=True,  # Show the colorbar
         colorbar=dict(
             title='Intensity (dB)',
             titleside='right',
             ticks='outside',
-        )
+        ),
+        colorscale='RdYlGn',
+        reversescale=True  # Reverse the colorscale to start with green and end with red
     ),
     text=[f'Button {i+1}' for i in range(len(df))],
     customdata=[i for i in range(len(df))]  # Custom data to identify buttons
@@ -93,7 +71,7 @@ app.layout = html.Div([
 # Callback to update the URL based on button click
 @app.callback(
     Output('url', 'pathname'),
-    [Input(f'Button_{i+1}', 'n_clicks') for i in range(len(df))]
+    [Input(f'button-{i+1}', 'n_clicks') for i in range(len(df))]
 )
 def update_url(*args):
     ctx = callback_context
@@ -112,13 +90,13 @@ def display_page(pathname):
     if pathname == '/':
         return html.Div([
             dcc.Graph(id='main-graph', figure=fig),
-            html.Div(id='Button_container', children=[
-                html.Button(f'Button {i+1}', id=f'Button_{i+1}', n_clicks=0) for i in range(len(df))
+            html.Div(id='button-container', children=[
+                html.Button(f'Button {i+1}', id=f'button-{i+1}', n_clicks=0) for i in range(len(df))
             ])
         ])
     elif pathname and pathname.startswith('/plot/'):
         button_id = pathname.split('/')[-1]
-        button_index = button_id.split('_')[-1]
+        button_index = button_id.split('-')[-1]
         return html.Div([
             html.H3(f'Displaying plot for {button_id}'),
             dcc.Graph(
@@ -126,7 +104,7 @@ def display_page(pathname):
                     data=[
                         go.Scatter(
                             x=freq_axis,
-                            y=frequency_responses[int(button_index)-1]
+                            y=y_data
                         )
                     ],
                     layout=go.Layout(
