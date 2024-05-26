@@ -14,7 +14,7 @@ global frequency_responses
 location_intensity = {'Latitude': [], 'Longitude': [], 'Intensity_dB': []}
 
 # Ensure that this is always true!
-freq_axis = numpy.linspace(0, HALF_SAMP_FREQ, num=int(HALF_SAMP_FREQ / SPECTRAL_RESOLUTION) + 1, endpoint=True).tolist()
+freq_axis = numpy.linspace(0, HALF_SAMP_FREQ, num=int(HALF_SAMP_FREQ / SPECTRAL_RESOLUTION) + 1, endpoint=rue).tolist()
 frequency_responses = []
 
 def getDataFromArduino():
@@ -142,4 +142,4 @@ def go_back(n_clicks):
     return '/'
 
 if __name__ == '__main__':
-    app.run_server(debug=True, use_reloader=False, port=8053)  # substitua 8080 pela porta desejada
+    app.run_server(debug=True, use_reloader=False, port=8053)
