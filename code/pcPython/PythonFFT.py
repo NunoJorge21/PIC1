@@ -18,7 +18,7 @@ def sscanf(string, format_string):
 def ReadLine(string):
     i = 1
     data = sscanf(string, "%s %d %d %d %d")
-    print(data)
+    #print(data)
     if data is not None and data[0] == "S:":
         for i in range(1,5):
             X.append(int(data[i]))
@@ -46,8 +46,6 @@ def ReadStuff():
         T.append(tSample*(i+2))
         T.append(tSample*(i+3))
         i = i + 4
-    print(len(X))
-    print(len(T))
 
     #Bilateral Fourier Transform
     Y = np.fft.fft(X)
