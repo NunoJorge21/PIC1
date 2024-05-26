@@ -85,7 +85,7 @@ layout = go.Layout(
 fig = go.Figure(data=[trace], layout=layout)
 
 # Initialize the Dash app with suppress_callback_exceptions=True
-app = Dash(__name__, suppress_callback_exceptions=True)
+app = Dash(__name__, suppress_callback_exceptions=True, title='Smart Sound Monitoring')
 
 # Define the app layout
 app.layout = html.Div([
@@ -98,6 +98,8 @@ app.layout = html.Div([
     Output('url', 'pathname'),
     Input('main-graph', 'clickData')
 )
+
+
 def update_url(clickData):
     if clickData is None:
         return '/'
@@ -145,6 +147,7 @@ def display_page(pathname):
     Input('back-button', 'n_clicks'),
     prevent_initial_call=True
 )
+
 def go_back(n_clicks):
     return '/'
 
