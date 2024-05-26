@@ -1,5 +1,5 @@
 ---
-Title: "Weeks 13 e 14"
+Title: "Weeks 13 and 14"
 date: 2024-05-24T22:00:00+06:00
 image_webp: images/blog/interviews.webp
 image: images/blog/interviews.jpg
