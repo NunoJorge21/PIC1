@@ -1,58 +1,38 @@
-import tkinter as tk
-from tkinter import messagebox
-import folium
-import webbrowser
-import os
-import threading
+import plotly.express as px
+import pandas as pd
 
-def start_local_server():
-    os.chdir('tiles')
-    os.system('python -m http.server')
+def getDataFromArduino():
+    data = {'Latitude': [38.736667, 38.736944, 38.736944, 38.736667], 
+            'Longitude': [-9.137222, -9.137222, -9.138333, -9.138333],
+            'Intensity_dB': [120, 120, 30, 30]}
 
-# Start the local server in a separate thread
-server_thread = threading.Thread(target=start_local_server)
-server_thread.daemon = True
-server_thread.start()
+    return pd.DataFrame(data)
 
-def generate_map(lat, lon):
-    # Create a folium map centered at the given latitude and longitude
-    tile_server = 'http://localhost:8000/{z}/{x}/{y}.png'
-    map_ = folium.Map(location=[lat, lon], zoom_start=13, tiles=tile_server, attr='Local Tiles')
-    folium.Marker([lat, lon], tooltip="Location").add_to(map_)
-    
-    # Save the map to an HTML file
-    map_.save("map.html")
-    
-    # Open the map in the default web browser
-    webbrowser.open("map.html")
+df = getDataFromArduino()
+#print(type(df))
+#print(df)
 
-def submit():
-    try:
-        # Get the input values
-        lat = float(lat_entry.get())
-        lon = float(lon_entry.get())
-        
-        # Generate the map with the provided coordinates
-        generate_map(lat, lon)
-    except ValueError:
-        messagebox.showerror("Invalid input", "Please enter valid numeric values for latitude and longitude")
+# color of the dot determined by 'peak_hour'
+# size of the dot determined by 'car_hours'
+fig = px.scatter_mapbox(df,
+                        lon = df['Longitude'],
+                        lat = df['Latitude'],
+                        zoom = 18,
+                        color = df['Intensity_dB'],
+                        size = df['Intensity_dB'],
+                        width = 1200,
+                        height = 900,
+                        title = 'Sound Monitoring Scatter Map')
 
-# Create the main window
-root = tk.Tk()
-root.title("GPS Coordinates to Map")
+fig.update_layout(mapbox_style='open-street-map')
 
-# Create and place the latitude and longitude entry fields
-tk.Label(root, text="Latitude:").grid(row=0, column=0, padx=10, pady=10)
-lat_entry = tk.Entry(root)
-lat_entry.grid(row=0, column=1, padx=10, pady=10)
+# Carto Positron: carto-positron
+# Carto Dark Matter: carto-darkmatter
+# Stamen Terrain: stamen-terrain
+# Stamen Toner: stamen-toner
+# Stamen Watercolor: stamen-watercolor
 
-tk.Label(root, text="Longitude:").grid(row=1, column=0, padx=10, pady=10)
-lon_entry = tk.Entry(root)
-lon_entry.grid(row=1, column=1, padx=10, pady=10)
+fig.update_layout(margin={'r':0, 't':50, 'l':0, 'b':10})
+fig.show()
 
-# Create and place the submit button
-submit_button = tk.Button(root, text="Generate Map", command=submit)
-submit_button.grid(row=2, columnspan=2, padx=10, pady=10)
-
-# Start the GUI event loop
-root.mainloop()
+print('Plot complete.')

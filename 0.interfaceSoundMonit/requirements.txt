@@ -1,4 +1,7 @@
+numpy==1.20.3
+tk
+pyinstaller
+folium
+osmnx
+tkinterweb==3.23.9
 
-tk==0.1.0
-pyinstaller==6.6.0
-folium==0.16.0
