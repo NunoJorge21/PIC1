@@ -345,7 +345,6 @@ void setup() {
   pinMode(LEDB, OUTPUT);
   pinMode(BUTTON_PIN, INPUT);
 
-  while (!Serial);
   //Starting protocols
   PDMInit();
   GPSInit(); //[Work in progress]
