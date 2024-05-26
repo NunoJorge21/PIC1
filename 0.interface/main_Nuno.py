@@ -1,3 +1,10 @@
+##########
+# FALTA:
+#   -> estabelecimento de comunicações com gateway;
+#       --> gerir ativação do programa de acordo com as comunicações
+#   -> while loop para garantir continuidade nas atualizações da informação;
+#       --> só acaba quando comunicações fecharem por completo ou utilizador fechar a janela 
+
 import plotly.graph_objects as go
 import pandas as pd
 from dash import Dash, dcc, html, Input, Output, callback_context
