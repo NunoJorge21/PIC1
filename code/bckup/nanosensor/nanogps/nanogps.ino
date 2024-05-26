@@ -7,7 +7,6 @@ void setup() {
   Serial.begin(115200);
   Serial1.begin(9600); // Using Serial1 for RP2040's first hardware serial port
 
-  while (!Serial); // Wait until Serial Monitor is open (optional)
 
   Serial.println("GPS Module Test");
 }
@@ -26,6 +25,7 @@ void loop() {
     Serial.println(F("No GPS detected: check wiring."));
     while (true);
   }
+  delay(1000);
 }
 
 void displayInfo() {
