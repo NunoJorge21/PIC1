@@ -188,4 +188,4 @@ def go_back(n_clicks):
     return '/'
 
 if __name__ == '__main__':
-    app.run_server(debug=True, use_reloader=False, port=8053)
+    app.run_server(debug=True, use_reloader=False, port=8051)

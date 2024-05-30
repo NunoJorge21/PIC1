@@ -68,7 +68,7 @@ scatter_trace = go.Scattermapbox(
             ticks='outside',
         )
     ),
-    text=[f'Button {i+1}<br>Intensity: {intensity} dB' for i, intensity in enumerate(df['Intensity_dB'])],
+    text=[f'Button {i+1}<br>{intensity} dB' for i, intensity in enumerate(df['Intensity_dB'])],
     hoverinfo='text',
     customdata=[i for i in range(len(df))]  # Custom data to identify points
 )
@@ -104,7 +104,7 @@ heatmap_trace = go.Scattermapbox(
             ticks='outside',
         )
     ),
-    text=[f'Intensity: {intensity} dB' for intensity in df['Intensity_dB']],
+    text=[f'Maximum intensity: {intensity} dB' for intensity in df['Intensity_dB']],
     hoverinfo='text'
 )
 
@@ -199,4 +199,4 @@ def go_back(n_clicks):
     return '/'
 
 if __name__ == '__main__':
-    app.run_server(debug=True, use_reloader=False, port=8053)
+    app.run_server(debug=True, use_reloader=False, port=8051)
