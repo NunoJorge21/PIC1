@@ -12,6 +12,7 @@ char message[50];
 unsigned long t1;
 unsigned long t2;
 char location[30];
+
 // Function to initialize LoRa
 void LoRaInit() {
   LoRa.setPins(SS, RST, DIO);
@@ -25,56 +26,54 @@ void LoRaInit() {
   LoRa.setCodingRate4(5);           // Set coding rate to CR4/5
 }
 
-String isValidMessage(String message) {
-  double lat, lng;
-  if (sscanf(message, "Lat: %f, Lng: %f", &lat, &lng) == 2) {
-    strcpy(location, message.c_str());
-    strcpy(message,"start");
-    return message;
-  }    
-  String numbers = message.substring(3);
-  int values[4];
-  int valueIndex = 0;
-  bool invalid = false;
+bool isNumeric(const char* str) {
+    if (strlen(str) == 0) return false;
 
-  for (int i = 0; i < 4; i++) {
-    int spaceIndex = numbers.indexOf(' ');
-    String number = (spaceIndex == -1) ? numbers : numbers.substring(0, spaceIndex);
-    numbers = (spaceIndex == -1) ? "" : numbers.substring(spaceIndex + 1);
-
-    if (isNumeric(number)) {
-      values[valueIndex] = number.toInt();
-    } else {
-      values[valueIndex] = 0;
-      invalid = true;
+    int i = 0;
+    if (str[0] == '-') {
+        if (strlen(str) == 1) return false;
+        i = 1;
     }
-    valueIndex++;
-  }
 
-  String result = "S:";
-  for (int i = 0; i < 4; i++) {
-    result += " " + String(values[i]);
-  }
+    for (; str[i] != '\0'; i++) {
+        if (!isdigit(str[i])) return false;
+    }
 
-  return result;
+    return true;
 }
 
-bool isNumeric(String str) {
-  if (str.length() == 0) return false;
+char* isValidMessage(char message[]) {
+    static char result[100];  // Static to ensure the returned pointer remains valid after function returns
+    double lat, lng;
 
-  int i = 0;
-  if (str.charAt(0) == '-') {
-    if (str.length() == 1) return false;
-    i = 1;
-  }
-
-  for (; i < str.length(); i++) {
-    if (!isDigit(str.charAt(i))) {
-      return false;
+    if (sscanf(message, "Lat: %lf, Lng: %lf", &lat, &lng) == 2) {
+        strcpy(location, message);
+        strcpy(message, "start");
+        return message;
     }
-  }
 
-  return true;
+    char numbers[100];  // Adjust size as needed
+    strncpy(numbers, message + 3, sizeof(numbers) - 1);
+    numbers[sizeof(numbers) - 1] = '\0';
+
+    int values[4] = {0, 0, 0, 0};
+    int valueIndex = 0;
+    bool invalid = false;
+
+    char* token = strtok(numbers, " ");
+    while (token != NULL && valueIndex < 4) {
+        if (isNumeric(token)) {
+            values[valueIndex] = atoi(token);
+        } else {
+            values[valueIndex] = 0;
+            invalid = true;
+        }
+        valueIndex++;
+        token = strtok(NULL, " ");
+    }
+
+    snprintf(result, sizeof(result), "S: %d %d %d %d", values[0], values[1], values[2], values[3]);
+    return result;
 }
 
 //Sends data through LoRa
@@ -85,17 +84,17 @@ void LoRaSend(){
 
   if(LoRa.beginPacket()){
     LoRa.print(msg);
-    Serial.println(msg);//debug
+    //Serial.println(msg);//debug
     LoRa.endPacket();
   }
   if(LoRa.beginPacket()){
     LoRa.print(msg);
-    Serial.println(msg);//debug
+    //Serial.println(msg);//debug
     LoRa.endPacket();
   }
   if(LoRa.beginPacket()){
     LoRa.print(msg);
-    Serial.println(msg);//debug
+    //Serial.println(msg);//debug
     LoRa.endPacket();
   }
   else{
@@ -130,7 +129,7 @@ void loop() {
           }
           message[index] = '\0';
           
-          strcpy(message , isValidMessage(message).c_str());
+          strcpy(message , isValidMessage(message));
           
 
           if (strcmp(message, "start") != 0 && strcmp(message, "finish") != 0){
@@ -146,8 +145,9 @@ void loop() {
       int i = 0;
       counter = 0;
       Serial.println("start");
+      Serial.print("position:");
+      Serial.println(location);
       while(i < NF/4){
-        //Serial.println(sent[i]);
         sprintf(message, "S: %d %d %d %d", sent[counter], sent[counter+1], sent[counter+2], sent[counter+3]);
         Serial.println(message);
         counter = counter+4;
