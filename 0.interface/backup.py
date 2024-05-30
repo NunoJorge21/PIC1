@@ -1,14 +1,7 @@
-##########
-# FALTA:
-#   -> estabelecimento de comunicações com gateway;
-#       --> gerir ativação do programa de acordo com as comunicações
-#   -> while loop para garantir continuidade nas atualizações da informação;
-#       --> só acaba quando comunicações fecharem por completo ou utilizador fechar a janela 
-
 import plotly.graph_objects as go
 import pandas as pd
 from dash import Dash, dcc, html, Input, Output, callback_context
-import numpy
+import numpy as np
 
 HALF_SAMP_FREQ = 20000  # 20 kHz
 SPECTRAL_RESOLUTION = 10  # Hz
@@ -21,14 +14,14 @@ global frequency_responses
 location_intensity = {'Latitude': [], 'Longitude': [], 'Intensity_dB': []}
 
 # Ensure that this is always true!
-freq_axis = numpy.linspace(0, HALF_SAMP_FREQ, num=int(HALF_SAMP_FREQ / SPECTRAL_RESOLUTION) + 1, endpoint=True).tolist()
+freq_axis = np.linspace(0, HALF_SAMP_FREQ, num=int(HALF_SAMP_FREQ / SPECTRAL_RESOLUTION) + 1, endpoint=True).tolist()
 frequency_responses = []
 
-def getDataFromArduino():
-    latitude = 38.736667
-    longitude = -9.13722
+def getDataFromArduino(lat, lon, dB):
+    latitude = lat
+    longitude = lon
     freq_data = [-170] * 2001
-    freq_data[100] = 20
+    freq_data[100] = dB
 
     frequency_responses.append(freq_data)
 
@@ -38,7 +31,11 @@ def getDataFromArduino():
 
     return pd.DataFrame(location_intensity)
 
-df = getDataFromArduino()
+# Add multiple data points
+df = getDataFromArduino(38.736667, -9.13722, 20)
+df = getDataFromArduino(38.7367, -9.1372, -40)
+df = getDataFromArduino(38.7368, -9.1373, 10)
+df = getDataFromArduino(38.7369, -9.1374, 30)
 
 # Custom colorscale
 custom_colorscale = [
@@ -50,7 +47,7 @@ custom_colorscale = [
 ]
 
 # Create a scattermapbox trace
-trace = go.Scattermapbox(
+scatter_trace = go.Scattermapbox(
     lat=df['Latitude'],
     lon=df['Longitude'],
     mode='markers',
@@ -70,8 +67,8 @@ trace = go.Scattermapbox(
     customdata=[i for i in range(len(df))]  # Custom data to identify points
 )
 
-# Create a layout for the figure
-layout = go.Layout(
+# Create the layout for the scatter map
+scatter_layout = go.Layout(
     title='Sound Monitoring Scatter Map',
     mapbox=dict(
         center=dict(lat=df['Latitude'].mean(), lon=df['Longitude'].mean()),
@@ -81,8 +78,40 @@ layout = go.Layout(
     margin=dict(r=0, t=50, l=0, b=10)
 )
 
-# Create the figure
-fig = go.Figure(data=[trace], layout=layout)
+# Create the scatter map figure
+scatter_fig = go.Figure(data=[scatter_trace], layout=scatter_layout)
+
+# Create a densitymapbox trace for the heatmap
+heatmap_trace = go.Densitymapbox(
+    lat=df['Latitude'],
+    lon=df['Longitude'],
+    z=df['Intensity_dB'],
+    radius=40,  # Adjusted radius to better visualize multiple points
+    colorscale=custom_colorscale,
+    showscale=True,  # Show the colorbar
+    colorbar=dict(
+        title='Intensity (dB)',
+        titleside='right',
+        ticks='outside',
+    ),
+    zmin=-40,  # Minimum dB value
+    zmax=30,   # Maximum dB value
+    opacity=0.6
+)
+
+# Create the layout for the heatmap
+heatmap_layout = go.Layout(
+    title='Sound Monitoring Heatmap',
+    mapbox=dict(
+        center=dict(lat=df['Latitude'].mean(), lon=df['Longitude'].mean()),
+        zoom=18,
+        style='carto-positron'
+    ),
+    margin=dict(r=0, t=50, l=0, b=10)
+)
+
+# Create the heatmap figure
+heatmap_fig = go.Figure(data=[heatmap_trace], layout=heatmap_layout)
 
 # Initialize the Dash app with suppress_callback_exceptions=True
 app = Dash(__name__, suppress_callback_exceptions=True, title='Smart Sound Monitoring')
@@ -96,16 +125,20 @@ app.layout = html.Div([
 # Callback to update the URL based on map click
 @app.callback(
     Output('url', 'pathname'),
-    Input('main-graph', 'clickData')
+    Input('main-graph', 'clickData'),
+    Input('switch-button', 'n_clicks')
 )
-
-
-def update_url(clickData):
-    if clickData is None:
+def update_url(clickData, n_clicks):
+    ctx = callback_context
+    if not ctx.triggered:
         return '/'
-    else:
+    trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    if trigger_id == 'main-graph' and clickData is not None:
         point_index = clickData['points'][0]['pointIndex']
         return f'/plot/button_{point_index + 1}'
+    elif trigger_id == 'switch-button':
+        return '/heatmap'
+    return '/'
 
 # Callback to display content based on URL
 @app.callback(
@@ -115,7 +148,13 @@ def update_url(clickData):
 def display_page(pathname):
     if pathname == '/':
         return html.Div([
-            dcc.Graph(id='main-graph', figure=fig)
+            dcc.Graph(id='main-graph', figure=scatter_fig),
+            html.Button("Switch to Heatmap View", id="switch-button", n_clicks=0)
+        ])
+    elif pathname == '/heatmap':
+        return html.Div([
+            dcc.Graph(id='heatmap-graph', figure=heatmap_fig),
+            html.Button("Back to Main Map", id="back-button", n_clicks=0)
         ])
     elif pathname and pathname.startswith('/plot/'):
         button_id = pathname.split('/')[-1]
@@ -147,7 +186,6 @@ def display_page(pathname):
     Input('back-button', 'n_clicks'),
     prevent_initial_call=True
 )
-
 def go_back(n_clicks):
     return '/'
 

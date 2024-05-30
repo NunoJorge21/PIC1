@@ -37,6 +37,11 @@ df = getDataFromArduino(38.7367, -9.1372, -40)
 df = getDataFromArduino(38.7368, -9.1373, 10)
 df = getDataFromArduino(38.7369, -9.1374, 30)
 
+# Normalize Intensity_dB for marker sizes
+min_size = 10
+max_size = 30
+df['Normalized_Size'] = np.interp(df['Intensity_dB'], (df['Intensity_dB'].min(), df['Intensity_dB'].max()), (min_size, max_size))
+
 # Custom colorscale
 custom_colorscale = [
     [0, 'green'],        # 0% corresponds to green
@@ -63,7 +68,8 @@ scatter_trace = go.Scattermapbox(
             ticks='outside',
         )
     ),
-    text=[f'Button {i+1}' for i in range(len(df))],
+    text=[f'Button {i+1}<br>Intensity: {intensity} dB' for i, intensity in enumerate(df['Intensity_dB'])],
+    hoverinfo='text',
     customdata=[i for i in range(len(df))]  # Custom data to identify points
 )
 
@@ -81,20 +87,25 @@ scatter_layout = go.Layout(
 # Create the scatter map figure
 scatter_fig = go.Figure(data=[scatter_trace], layout=scatter_layout)
 
-# Create a densitymapbox trace for the heatmap
-heatmap_trace = go.Densitymapbox(
+# Create a densitymapbox trace for the heatmap (using Scattermapbox for size variations)
+heatmap_trace = go.Scattermapbox(
     lat=df['Latitude'],
     lon=df['Longitude'],
-    z=df['Intensity_dB'],
-    radius=20,  # Adjusted radius to better visualize multiple points
-    colorscale=custom_colorscale,
-    showscale=True,  # Show the colorbar
-    colorbar=dict(
-        title='Intensity (dB)',
-        titleside='right',
-        ticks='outside',
+    mode='markers',
+    marker=dict(
+        size=df['Normalized_Size'],
+        color=df['Intensity_dB'],
+        opacity=0.8,
+        colorscale=custom_colorscale,
+        showscale=True,  # Show the colorbar
+        colorbar=dict(
+            title='Intensity (dB)',
+            titleside='right',
+            ticks='outside',
+        )
     ),
-    opacity=0.6
+    text=[f'Intensity: {intensity} dB' for intensity in df['Intensity_dB']],
+    hoverinfo='text'
 )
 
 # Create the layout for the heatmap
