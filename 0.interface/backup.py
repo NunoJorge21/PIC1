@@ -3,7 +3,6 @@ import pandas as pd
 from dash import Dash, dcc, html, Input, Output, callback_context
 import numpy as np
 from scipy.ndimage import gaussian_filter
-from scipy.spatial import distance
 import plotly.colors
 
 
@@ -46,15 +45,14 @@ min_size = 10
 max_size = 30
 df['Normalized_Size'] = np.interp(df['Intensity_dB'], (df['Intensity_dB'].min(), df['Intensity_dB'].max()), (min_size, max_size))
 
-# Custom colorscale with valid hexadecimal color codes
+# Custom colorscale
 custom_colorscale = [
-    [0, '#00FF00'],         # Green
-    [0.25, '#90EE90'],      # Light Green
-    [0.5, '#FFFF00'],       # Yellow
-    [0.75, '#FFA500'],      # Orange
-    [1, '#FF0000']          # Red
+    [0, 'green'],        # 0% corresponds to green
+    [0.25, 'limegreen'], # 25% - lighter green
+    [0.5, 'yellow'],     # 50% - yellow
+    [0.75, 'orange'],    # 75% - orange
+    [1, 'red']           # 100% corresponds to red
 ]
-
 
 # Function to map intensity values to colors
 def map_intensity_to_color(intensity, colorscale):
@@ -119,23 +117,6 @@ scatter_layout = go.Layout(
 scatter_fig = go.Figure(data=[scatter_trace], layout=scatter_layout)
 
 
-# Function to convert RGB tuples to hexadecimal format
-def rgb_to_hex(rgb):
-    return '#{:02x}{:02x}{:02x}'.format(int(rgb[0]), int(rgb[1]), int(rgb[2]))
-
-# Function to interpolate colors based on intensity and distance
-def interpolate_color(intensity, distance, colorscale):
-    scale_values, scale_colors = zip(*colorscale)
-    # Find the index of the nearest intensity value in the scale
-    intensity_idx = np.abs(np.array(scale_values) - intensity).argmin()
-    # Find the index of the nearest distance value in the scale
-    distance_idx = np.abs(np.array(scale_values) - distance).argmin()
-    # Interpolate between the intensity and distance colors
-    color1 = plotly.colors.hex_to_rgb(scale_colors[intensity_idx])
-    color2 = plotly.colors.hex_to_rgb(scale_colors[distance_idx])
-    interpolated_color = plotly.colors.find_intermediate_color(color1, color2, intensity / distance)
-    return rgb_to_hex(interpolated_color)
-
 # Create scatter traces for each Gaussian blob
 heatmap_traces = []
 for i, blob in enumerate(blobs):
@@ -143,18 +124,9 @@ for i, blob in enumerate(blobs):
     lat_values = lat_range[lat_idx]
     lon_values = lon_range[lon_idx]
     intensity_values = blob[lat_idx, lon_idx]
-
-    # Find the original color from the main map for the middle point
-    middle_lat = df['Latitude'].iloc[i]
-    middle_lon = df['Longitude'].iloc[i]
-    middle_intensity = df['Intensity_dB'].iloc[i]
-    original_color = map_intensity_to_color(middle_intensity, custom_colorscale)
-
-    # Calculate distances of each point from the source point
-    distances = [distance.euclidean((lat_values[j], lon_values[j]), (middle_lat, middle_lon)) for j in range(len(lat_values))]
-
-    # Determine the color of each point based on intensity and distance
-    color_values = [interpolate_color(intensity_values[j], distances[j], custom_colorscale) for j in range(len(lat_values))]
+    
+    # Determine the color of each point based on intensity
+    color_values = [map_intensity_to_color(val, custom_colorscale) for val in intensity_values]
 
     heatmap_traces.append(go.Scattermapbox(
         lat=lat_values,
