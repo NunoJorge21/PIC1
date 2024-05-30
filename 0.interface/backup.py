@@ -2,6 +2,10 @@ import plotly.graph_objects as go
 import pandas as pd
 from dash import Dash, dcc, html, Input, Output, callback_context
 import numpy as np
+from scipy.ndimage import gaussian_filter
+from scipy.spatial import distance
+import plotly.colors
+
 
 HALF_SAMP_FREQ = 20000  # 20 kHz
 SPECTRAL_RESOLUTION = 10  # Hz
@@ -37,22 +41,55 @@ df = getDataFromArduino(38.7367, -9.1372, -40)
 df = getDataFromArduino(38.7368, -9.1373, 10)
 df = getDataFromArduino(38.7369, -9.1374, 30)
 
-# Custom colorscale
+# Normalize Intensity_dB for marker sizes
+min_size = 10
+max_size = 30
+df['Normalized_Size'] = np.interp(df['Intensity_dB'], (df['Intensity_dB'].min(), df['Intensity_dB'].max()), (min_size, max_size))
+
+# Custom colorscale with valid hexadecimal color codes
 custom_colorscale = [
-    [0, 'green'],        # 0% corresponds to green
-    [0.25, 'limegreen'], # 25% - lighter green
-    [0.5, 'yellow'],     # 50% - yellow
-    [0.75, 'orange'],    # 75% - orange
-    [1, 'red']           # 100% corresponds to red
+    [0, '#00FF00'],         # Green
+    [0.25, '#90EE90'],      # Light Green
+    [0.5, '#FFFF00'],       # Yellow
+    [0.75, '#FFA500'],      # Orange
+    [1, '#FF0000']          # Red
 ]
 
-# Create a scattermapbox trace
+
+# Function to map intensity values to colors
+def map_intensity_to_color(intensity, colorscale):
+    scale_values, scale_colors = zip(*colorscale)
+    # Find the index of the nearest intensity value in the scale
+    idx = np.abs(np.array(scale_values) - intensity).argmin()
+    # Return the corresponding color
+    return scale_colors[idx]
+
+
+# Function to create Gaussian blobs for each point
+def create_gaussian_blobs(df, lat_range, lon_range, grid_size=(200, 200), sigma=5, threshold=0.05):
+    blobs = []
+    for _, row in df.iterrows():
+        lat_idx = np.searchsorted(lat_range, row['Latitude'])
+        lon_idx = np.searchsorted(lon_range, row['Longitude'])
+        grid = np.zeros(grid_size)
+        grid[lat_idx, lon_idx] = row['Intensity_dB']
+        blob = gaussian_filter(grid, sigma=sigma)
+        blob[blob < threshold] = 0  # Apply the threshold
+        blobs.append(blob)
+    return blobs
+
+# Adjust the range to a smaller area around the data points
+lat_range = np.linspace(df['Latitude'].min() - 0.001, df['Latitude'].max() + 0.001, 200)
+lon_range = np.linspace(df['Longitude'].min() - 0.001, df['Longitude'].max() + 0.001, 200)
+blobs = create_gaussian_blobs(df, lat_range, lon_range)
+
+# Create a scattermapbox trace for the main graph
 scatter_trace = go.Scattermapbox(
     lat=df['Latitude'],
     lon=df['Longitude'],
     mode='markers',
     marker=dict(
-        size=20,
+        size=df['Normalized_Size'],
         color=df['Intensity_dB'],
         opacity=0.8,
         colorscale=custom_colorscale,
@@ -63,8 +100,8 @@ scatter_trace = go.Scattermapbox(
             ticks='outside',
         )
     ),
-    text=[f'Button {i+1}' for i in range(len(df))],
-    customdata=[i for i in range(len(df))]  # Custom data to identify points
+    text=[f'Intensity: {intensity} dB' for intensity in df['Intensity_dB']],
+    hoverinfo='text'
 )
 
 # Create the layout for the scatter map
@@ -81,23 +118,57 @@ scatter_layout = go.Layout(
 # Create the scatter map figure
 scatter_fig = go.Figure(data=[scatter_trace], layout=scatter_layout)
 
-# Create a densitymapbox trace for the heatmap
-heatmap_trace = go.Densitymapbox(
-    lat=df['Latitude'],
-    lon=df['Longitude'],
-    z=df['Intensity_dB'],
-    radius=40,  # Adjusted radius to better visualize multiple points
-    colorscale=custom_colorscale,
-    showscale=True,  # Show the colorbar
-    colorbar=dict(
-        title='Intensity (dB)',
-        titleside='right',
-        ticks='outside',
-    ),
-    zmin=-40,  # Minimum dB value
-    zmax=30,   # Maximum dB value
-    opacity=0.6
-)
+
+# Function to convert RGB tuples to hexadecimal format
+def rgb_to_hex(rgb):
+    return '#{:02x}{:02x}{:02x}'.format(int(rgb[0]), int(rgb[1]), int(rgb[2]))
+
+# Function to interpolate colors based on intensity and distance
+def interpolate_color(intensity, distance, colorscale):
+    scale_values, scale_colors = zip(*colorscale)
+    # Find the index of the nearest intensity value in the scale
+    intensity_idx = np.abs(np.array(scale_values) - intensity).argmin()
+    # Find the index of the nearest distance value in the scale
+    distance_idx = np.abs(np.array(scale_values) - distance).argmin()
+    # Interpolate between the intensity and distance colors
+    color1 = plotly.colors.hex_to_rgb(scale_colors[intensity_idx])
+    color2 = plotly.colors.hex_to_rgb(scale_colors[distance_idx])
+    interpolated_color = plotly.colors.find_intermediate_color(color1, color2, intensity / distance)
+    return rgb_to_hex(interpolated_color)
+
+# Create scatter traces for each Gaussian blob
+heatmap_traces = []
+for i, blob in enumerate(blobs):
+    lat_idx, lon_idx = np.where(blob > 0)
+    lat_values = lat_range[lat_idx]
+    lon_values = lon_range[lon_idx]
+    intensity_values = blob[lat_idx, lon_idx]
+
+    # Find the original color from the main map for the middle point
+    middle_lat = df['Latitude'].iloc[i]
+    middle_lon = df['Longitude'].iloc[i]
+    middle_intensity = df['Intensity_dB'].iloc[i]
+    original_color = map_intensity_to_color(middle_intensity, custom_colorscale)
+
+    # Calculate distances of each point from the source point
+    distances = [distance.euclidean((lat_values[j], lon_values[j]), (middle_lat, middle_lon)) for j in range(len(lat_values))]
+
+    # Determine the color of each point based on intensity and distance
+    color_values = [interpolate_color(intensity_values[j], distances[j], custom_colorscale) for j in range(len(lat_values))]
+
+    heatmap_traces.append(go.Scattermapbox(
+        lat=lat_values,
+        lon=lon_values,
+        mode='markers',
+        marker=dict(
+            size=10,
+            color=color_values,
+            opacity=0.3,  # Decreased opacity
+            colorscale=custom_colorscale,
+            showscale=False  # Hide individual colorbars
+        ),
+        hoverinfo='none'
+    ))
 
 # Create the layout for the heatmap
 heatmap_layout = go.Layout(
@@ -111,7 +182,7 @@ heatmap_layout = go.Layout(
 )
 
 # Create the heatmap figure
-heatmap_fig = go.Figure(data=[heatmap_trace], layout=heatmap_layout)
+heatmap_fig = go.Figure(data=heatmap_traces, layout=heatmap_layout)
 
 # Initialize the Dash app with suppress_callback_exceptions=True
 app = Dash(__name__, suppress_callback_exceptions=True, title='Smart Sound Monitoring')
@@ -190,4 +261,4 @@ def go_back(n_clicks):
     return '/'
 
 if __name__ == '__main__':
-    app.run_server(debug=True, use_reloader=False, port=8053)
+    app.run_server(debug=True, use_reloader=False, port=8051)
