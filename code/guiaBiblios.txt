@@ -20,3 +20,9 @@ pip install pyserial
 pip install numpy
 pip install matplotlib
 
+  para a interface:
+  pip install plotly
+  pip install pandas
+  pip install dash
+  pip install dash_bootstrap_components
+  pip install dash_leaflet
