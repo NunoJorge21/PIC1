@@ -19,10 +19,8 @@ sudo apt install python3-pip (pip para instalar biblios)
 pip install pyserial
 pip install numpy
 pip install matplotlib
-
-  para a interface:
-  pip install plotly
-  pip install pandas
-  pip install dash
-  pip install dash_bootstrap_components
-  pip install dash_leaflet
+pip install plotly
+pip install pandas
+pip install dash
+pip install dash_bootstrap_components
+pip install dash_leaflet
