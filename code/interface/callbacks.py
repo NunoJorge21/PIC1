@@ -1,97 +1,10 @@
+# callbacks.py
+from dash import Input, Output, State, html, dcc
 import plotly.graph_objects as go
-import pandas as pd
-from dash import Dash, dcc, html, Input, Output, State
-import dash_bootstrap_components as dbc
-import numpy as np
 import dash_leaflet as dl
-import dash_leaflet.express as dlx
-
-HALF_SAMP_FREQ = 20000  # 20 kHz
-SPECTRAL_RESOLUTION = 10  # Hzpy
-
-location_intensity = {'Latitude': [], 'Longitude': [], 'Intensity_dB': []}
-freq_axis = np.linspace(0, HALF_SAMP_FREQ, num=int(HALF_SAMP_FREQ / SPECTRAL_RESOLUTION) + 1, endpoint=True).tolist()
-frequency_responses = []
-
-def get_data_from_arduino():
-    latitude = np.random.uniform(38.736, 38.737)
-    longitude = np.random.uniform(-9.138, -9.137)
-    freq_data = np.random.uniform(-170, -100, size=len(freq_axis)).tolist()
-    freq_data[100] = 20 + np.random.randint(-5, 5)  # Simulate some peak
-
-    frequency_responses.append(freq_data)
-
-    location_intensity['Latitude'].append(latitude)
-    location_intensity['Longitude'].append(longitude)
-    location_intensity['Intensity_dB'].append(max(freq_data))  # consider maximum intensity
-
-    return pd.DataFrame(location_intensity)
-
-def create_scattermapbox_trace(df, custom_colorscale):
-    return go.Scattermapbox(
-        lat=df['Latitude'],
-        lon=df['Longitude'],
-        mode='markers',
-        marker=dict(
-            size=20,
-            color=df['Intensity_dB'],
-            opacity=0.8,
-            colorscale=custom_colorscale,
-            showscale=True,
-            colorbar=dict(
-                title='Intensity (dB)',
-                titleside='right',
-                ticks='outside',
-            )
-        ),
-        text=[f'Button {i+1}' for i in range(len(df))],
-        customdata=[i for i in range(len(df))]
-    )
-
-def create_layout(df):
-    return go.Layout(
-        title='Sound Monitoring Scatter Map',
-        mapbox=dict(
-            center=dict(lat=df['Latitude'].mean(), lon=df['Longitude'].mean()),
-            zoom=18,
-            style='carto-positron'
-        ),
-        margin=dict(r=0, t=0, l=0, b=0),
-        height=800
-    )
-
-def create_navbar():
-    return dbc.Navbar(
-        dbc.Container(
-            [
-                dbc.NavbarBrand("Sound Monitoring", href="/", className="ms-2"),
-                dbc.Nav(
-                    [
-                        dbc.NavLink("Sound Monitoring Scatter Map", href="/", id="link-home", className="me-2"),
-                        dbc.NavLink("Layout Edit", href="/layout-edit", id="link-layout-edit", className="me-2"),
-                    ],
-                    navbar=True,
-                ),
-            ],
-            fluid=True,
-        ),
-        color="lightblue",
-        dark=False,
-        className="mb-4",
-        fixed="top",
-    )
-
-def initialize_dash_app(fig):
-    app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True, title='Smart Sound Monitoring')
-
-    app.layout = html.Div([
-        dcc.Location(id='url', refresh=False),
-        create_navbar(),
-        html.Div(id='page-content', style={'padding': '20px', 'marginTop': '56px'}),  # Add marginTop to account for fixed navbar
-        dcc.Interval(id='interval-component', interval=5000, n_intervals=0)  # Trigger updates every 5 seconds
-    ])
-
-    return app
+from data_processing import get_data_from_arduino
+from layout import create_scattermapbox_trace, create_layout
+import global_vars as gv
 
 def register_callbacks(app, fig):
     @app.callback(
@@ -136,8 +49,8 @@ def register_callbacks(app, fig):
                         figure=go.Figure(
                             data=[
                                 go.Scatter(
-                                    x=freq_axis,
-                                    y=frequency_responses[button_index]
+                                    x=gv.freq_axis[button_index],
+                                    y=gv.frequency_responses[button_index]
                                 )
                             ],
                             layout=go.Layout(
@@ -149,7 +62,9 @@ def register_callbacks(app, fig):
                     )
                 ])
             except IndexError:
-                return html.Div("Invalid button index")
+                return html.Div([
+                    html.H3('Invalid button ID')
+                ])
         elif pathname == '/layout-edit':
             return html.Div([
                 html.H3('This is the Layout Edit page.'),
@@ -207,23 +122,15 @@ def register_callbacks(app, fig):
             return html.Pre(str(data))
         return "No drawings yet"
 
-def main():
-    df = get_data_from_arduino()  # Initial data points
-    custom_colorscale = [
-        [0, 'green'],
-        [0.25, 'limegreen'],
-        [0.5, 'yellow'],
-        [0.75, 'orange'],
-        [1, 'red']
-    ]
-    trace = create_scattermapbox_trace(df, custom_colorscale)
-    layout = create_layout(df)
-    fig = go.Figure(data=[trace], layout=layout)
-
-    app = initialize_dash_app(fig)
-    register_callbacks(app, fig)
-
-    if __name__ == '__main__':
-        app.run_server(debug=True, use_reloader=False, port=8055)
-
-main()
+    @app.callback(
+        Output('main-graph', 'figure'),
+        Input('interval-component', 'n_intervals')
+    )
+    def update_graph_live(n_intervals):
+        if gv.new_data_available:
+            get_data_from_arduino()
+            gv.new_data_available = False  # Reset the flag after reading data
+            print(gv.df)  # Debug print to verify data frame content
+        trace = create_scattermapbox_trace(gv.df, gv.custom_colorscale)
+        layout = create_layout(gv.df)
+        return go.Figure(data=[trace], layout=layout)

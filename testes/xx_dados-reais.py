@@ -6,8 +6,6 @@
 #   usar código improved_fred.py
 #######################################################################
 
-
-
 import plotly.graph_objects as go
 import pandas as pd
 from dash import Dash, dcc, html, Input, Output, State, callback_context
