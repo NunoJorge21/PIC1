@@ -1,133 +1,109 @@
-import serial
-import time
-import numpy as np
-import matplotlib.pyplot as plt
-import re
-import pandas as pd
 import plotly.graph_objects as go
+import pandas as pd
 from dash import Dash, dcc, html, Input, Output, State
 import dash_bootstrap_components as dbc
+import numpy as np
+import dash_leaflet as dl
+import serial
+import time
+import re
+import threading
+import socket
 
 # Constants
-NUM_SAMPLES = 1024
-FS = 25000  # Sampling frequency same as Arduino
-HALF_SAMP_FREQ = 20000  # 20 kHz
+HALF_SAMP_FREQ = 12500  # 20 kHz
 SPECTRAL_RESOLUTION = 10  # Hz
+NSAMP = 1024
+NF = 512
 
+# Globals
+global custom_colorscale, X, T, F, S, S_dB, ser, lat, lng, location_intensity, freq_axis, frequency_responses, df, new_data_available
+global data_buffer, initial_view
+
+# Initializing global variables
+custom_colorscale = [
+    [0, 'green'],
+    [0.25, 'limegreen'],
+    [0.5, 'yellow'],
+    [0.75, 'orange'],
+    [1, 'red']
+]
+
+# Data vectors
+X, T, F, S, S_dB = [], [], [], [], []
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=100)
+time.sleep(2)
+
+# Global variables for data storage
 location_intensity = {'Latitude': [], 'Longitude': [], 'Intensity_dB': []}
-freq_axis = np.linspace(0, HALF_SAMP_FREQ, num=int(HALF_SAMP_FREQ / SPECTRAL_RESOLUTION) + 1, endpoint=True).tolist()
-frequency_responses = []
+freq_axis, frequency_responses = [], []
+lat, lng = 0.0, 0.0
+new_data_available = False  # Flag for new data availability
+data_buffer = []  # Buffer to store data between "start" and "finish"
+initial_view = True  # Flag to check if it's the first view
 
-# Serial data processing functions
+# DataFrame
+df = pd.DataFrame(location_intensity)
+
+# Helper functions for reading data
 def sscanf(string, format_string):
     pattern = format_string.replace('%d', r'(-?\d+)').replace('%f', r'(-?\d+\.\d+)').replace('%s', r'(\S+)')
     match = re.match(pattern, string)
     if match:
         return match.groups()
-    return None
 
-def read_line(string, sensor_data):
+def ReadLine(string):
     data = sscanf(string, "%s %d %d %d %d")
-    if data is not None and data[0] == "S:":
+    if data and data[0] == "S:":
         for i in range(1, 5):
-            sensor_data.append(int(data[i]))
+            X.append(int(data[i]))
 
-def read_data_from_serial(ser):
-    sensor_data = []
-    time_stamps = []
-    gps_pattern = r"position:Lat: (-?\d+\.\d+), Lng: (-?\d+\.\d+)"
-    sample_interval = 1 / FS
-    sample_index = 0
-
-    while True:
-        try:
-            line = ser.readline().strip().decode()
-        except Exception as e:
-            print(f"Error reading line: {e}")
+def ReadStuff():
+    global lat, lng, data_buffer, S_dB
+    X.clear()
+    T.clear()
+    F.clear()
+    S.clear()
+    S_dB.clear()
+    fs = 25000  # Sampling frequency
+    tSample = 1 / fs
+    i = 0
+    for line in data_buffer:
+        match = re.match(r"position:Lat: (-?\d+\.\d+), Lng: (-?\d+\.\d+)", line)
+        if match:
+            lat, lng = float(match.group(1)), float(match.group(2))
             continue
-
-        if re.match(gps_pattern, line):
-            lat, lng = map(float, re.findall(gps_pattern, line)[0])
-            print(f"Latitude: {lat}, Longitude: {lng}")
-            location_intensity['Latitude'].append(lat)
-            location_intensity['Longitude'].append(lng)
-            continue
-
-        if line == "finish":
-            print("finished reading")
-            break
-
-        read_line(line, sensor_data)
+        ReadLine(line)
         for j in range(4):
-            time_stamps.append(sample_interval * (sample_index + j))
-        sample_index += 4
+            T.append(tSample * (i + j))
+        i += 4
 
-    return np.array(time_stamps), np.array(sensor_data)
+    # Bilateral Fourier Transform
+    Y = np.fft.fft(X)
+    F1 = np.fft.fftfreq(NSAMP, tSample)
+    i = 0
+    while F1[i] >= 0:
+        F.append(F1[i])
+        S.append(2 * pow(abs(Y[i]) / NSAMP, 2) if i else pow(abs(Y[i]) / NSAMP, 2))
+        if S[i] == 0: S[i] = 0.00001
+        i += 1
+    S[i - 1] = S[i - 1]/2
+    S_dB = (10 * np.log10(S)).tolist()
 
-def compute_fft(sensor_data, sample_interval):
-    Y = np.fft.fft(sensor_data)
-    F1 = np.fft.fftfreq(NUM_SAMPLES, sample_interval)
+def get_data_from_arduino():
+    global lat, lng, df, data_buffer, S_dB, freq_axis, frequency_responses
+    ReadStuff()  # Process the data buffer
+    data_buffer = []  # Clear the buffer after processing
 
-    F = F1[:NUM_SAMPLES//2]
-    power_spectrum = (2.0 / NUM_SAMPLES) * np.abs(Y[:NUM_SAMPLES//2])**2
-    power_spectrum_dB = 10 * np.log10(power_spectrum)
-    
-    return F, power_spectrum_dB
+    F_copy = F.copy()
+    S_dB_copy = S_dB.copy()
+    freq_axis.append(F_copy)
+    frequency_responses.append(S_dB_copy)
 
-def compute_sound_level_dB(signal_data):
-    rms_value = np.sqrt(np.mean(np.square(signal_data)))
-    dB_value = 20 * np.log10(rms_value)
-    return dB_value
-
-def plot_data(time_stamps, sensor_data, F, power_spectrum_dB, sound_level_dB):
-    plt.figure(1, figsize=(10, 6))
-
-    # Plot of the Audio
-    plt.subplot(2, 1, 1)
-    plt.plot(time_stamps, sensor_data)
-    plt.title(f'Signal Recorded - Sound Level: {sound_level_dB:.2f} dB')
-    plt.xlabel('Time [s]')
-    plt.ylabel('Amplitude [V]')
-    plt.grid(True)
-
-    # Plot of the Density Power Spectrum
-    plt.subplot(2, 1, 2)
-    plt.plot(F, power_spectrum_dB)
-    plt.title('Power Spectrum')
-    plt.xlabel('Frequency [Hz]')
-    plt.ylabel('Power [dBW]')
-    plt.grid(True)
-
-    plt.tight_layout()
-    plt.show()
-
-# Dash app functions
-def get_data_from_arduino(update=False):
-    if not update:
-        for _ in range(10):  # Initial data points
-            latitude = np.random.uniform(38.736, 38.737)
-            longitude = np.random.uniform(-9.138, -9.137)
-            freq_data = np.random.uniform(-170, -100, size=len(freq_axis)).tolist()
-            freq_data[100] = 20 + np.random.randint(-5, 5)  # Simulate some peak
-
-            frequency_responses.append(freq_data)
-
-            location_intensity['Latitude'].append(latitude)
-            location_intensity['Longitude'].append(longitude)
-            location_intensity['Intensity_dB'].append(max(freq_data))  # consider maximum intensity
-    else:
-        latitude = np.random.uniform(38.736, 38.737)
-        longitude = np.random.uniform(-9.138, -9.137)
-        freq_data = np.random.uniform(-170, -100, size=len(freq_axis)).tolist()
-        freq_data[100] = 20 + np.random.randint(-5, 5)  # Simulate some peak
-
-        frequency_responses.append(freq_data)
-
-        location_intensity['Latitude'].append(latitude)
-        location_intensity['Longitude'].append(longitude)
-        location_intensity['Intensity_dB'].append(max(freq_data))  # consider maximum intensity
-
-    return pd.DataFrame(location_intensity)
+    location_intensity['Latitude'].append(lat)
+    location_intensity['Longitude'].append(lng)
+    location_intensity['Intensity_dB'].append(max(S_dB))
+    df = pd.DataFrame(location_intensity)
 
 def create_scattermapbox_trace(df, custom_colorscale):
     return go.Scattermapbox(
@@ -143,19 +119,19 @@ def create_scattermapbox_trace(df, custom_colorscale):
             colorbar=dict(
                 title='Intensity (dB)',
                 titleside='right',
-                ticks='outside',
+                ticks='outside'
             )
         ),
-        text=[f'Button {i+1}' for i in range(len(df))],
+        text=[f'Button {i + 1}' for i in range(len(df))],
         customdata=[i for i in range(len(df))]
     )
 
-def create_layout(df):
+def create_layout(df, zoom=6, center_lat=39.5, center_lon=-8):  # Zoom adjusted to 6 for a better view of Portugal
     return go.Layout(
         title='Sound Monitoring Scatter Map',
         mapbox=dict(
-            center=dict(lat=df['Latitude'].mean(), lon=df['Longitude'].mean()),
-            zoom=18,
+            center=dict(lat=center_lat, lon=center_lon),
+            zoom=zoom,
             style='carto-positron'
         ),
         margin=dict(r=0, t=0, l=0, b=0),
@@ -170,6 +146,7 @@ def create_navbar():
                 dbc.Nav(
                     [
                         dbc.NavLink("Sound Monitoring Scatter Map", href="/", id="link-home", className="me-2"),
+                        dbc.NavLink("Layout Edit", href="/layout-edit", id="link-layout-edit", className="me-2"),
                     ],
                     navbar=True,
                 ),
@@ -183,15 +160,15 @@ def create_navbar():
     )
 
 def initialize_dash_app(fig):
+    global app, freq_axis, frequency_responses
     app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True, title='Smart Sound Monitoring')
-
     app.layout = html.Div([
         dcc.Location(id='url', refresh=False),
         create_navbar(),
-        html.Div(id='page-content', style={'padding': '20px', 'marginTop': '56px'}),  # Add marginTop to account for fixed navbar
-        dcc.Interval(id='interval-component', interval=5000, n_intervals=0)  # Trigger updates every 5 seconds
+        html.Div(id='page-content', style={'padding': '20px', 'marginTop': '56px'}),
+        dcc.Interval(id='interval-component', interval=1 * 1000, n_intervals=0),
+        dcc.Store(id='zoom-store', data={'zoom': 6, 'center': {'lat': 39.5, 'lon': -8}})  # Store for zoom and center state
     ])
-
     return app
 
 def register_callbacks(app, fig):
@@ -204,16 +181,19 @@ def register_callbacks(app, fig):
             return '/'
         else:
             point_index = clickData['points'][0]['customdata']
-            return f'/fourier_transform/button_{point_index + 1}'
+            return f'/plot/button_{point_index + 1}'
 
     @app.callback(
-        [Output('link-home', 'active')],
+        [Output('link-home', 'active'),
+         Output('link-layout-edit', 'active')],
         Input('url', 'pathname')
     )
     def update_active_links(pathname):
         if pathname == '/':
-            return [True]
-        return [False]
+            return True, False
+        elif pathname == '/layout-edit':
+            return False, True
+        return False, False
 
     @app.callback(
         Output('page-content', 'children'),
@@ -224,22 +204,22 @@ def register_callbacks(app, fig):
             return html.Div([
                 dcc.Graph(id='main-graph', figure=fig)
             ])
-        elif pathname and pathname.startswith('/fourier_transform/'):
+        elif pathname and pathname.startswith('/plot/'):
             try:
                 button_id = pathname.split('/')[-1]
                 button_index = int(button_id.split('_')[-1]) - 1
                 return html.Div([
-                    html.H3(f'Fourier Transform for {button_id}'),
+                    html.H3(f'Displaying plot for {button_id}'),
                     dcc.Graph(
                         figure=go.Figure(
                             data=[
                                 go.Scatter(
-                                    x=freq_axis,
+                                    x=freq_axis[button_index],
                                     y=frequency_responses[button_index]
                                 )
                             ],
                             layout=go.Layout(
-                                title=f'Fourier Transform for {button_id}',
+                                title=f'Plot for {button_id}',
                                 xaxis=dict(title='Frequency [Hz]'),
                                 yaxis=dict(title='Intensity [dB]')
                             )
@@ -247,45 +227,153 @@ def register_callbacks(app, fig):
                     )
                 ])
             except IndexError:
-                return html.Div("Invalid button index")
+                return html.Div([
+                    html.H3('Invalid button ID')
+                ])
+        elif pathname == '/layout-edit':
+            return html.Div([
+                html.H3('This is the Layout Edit page.'),
+                html.Button('Draw New Sound Source', id='draw-button', n_clicks=0),
+                dl.Map(center=[39.5, -8], zoom=6, children=[
+                    dl.TileLayer(),
+                    dl.FeatureGroup(id="feature-group", children=[
+                        dl.EditControl(
+                            id='edit-control',
+                            draw={
+                                "polyline": False,
+                                "polygon": False,
+                                "circle": False,
+                                "marker": False,
+                                "circlemarker": False,
+                                "rectangle": True
+                            },
+                            edit={"remove": True}
+                        )
+                    ])
+                ], style={'height': '600px'}),
+                html.Div(id='draw-data')
+            ])
         return html.Div("404 Page Not Found")
 
     @app.callback(
-        Output('main-graph', 'figure'),
-        Input('interval-component', 'n_intervals')
+        Output('feature-group', 'children'),
+        Input('draw-button', 'n_clicks'),
+        State('feature-group', 'children')
     )
-    def update_graph_live(n):
-        df = get_data_from_arduino(update=True)
-        custom_colorscale = [
-            [0, 'green'],
-            [0.25, 'limegreen'],
-            [0.5, 'yellow'],
-            [0.75, 'orange'],
-            [1, 'red']
-        ]
-        trace = create_scattermapbox_trace(df, custom_colorscale)
-        layout = create_layout(df)
-        fig = go.Figure(data=[trace], layout=layout)
-        return fig
+    def activate_draw_mode(n_clicks, children):
+        if n_clicks > 0:
+            return [
+                dl.EditControl(
+                    id='edit-control',
+                    draw={
+                        "polyline": False,
+                        "polygon": False,
+                        "circle": False,
+                        "marker": False,
+                        "circlemarker": False,
+                        "rectangle": True
+                    },
+                    edit={"remove": True}
+                )
+            ]
+        return children
 
-# Main function to run the app
+    @app.callback(
+        Output('draw-data', 'children'),
+        Input('edit-control', 'geojson')
+    )
+    def show_draw_data(data):
+        if data:
+            return html.Pre(str(data))
+        return "No drawings yet"
+
+    @app.callback(
+        Output('main-graph', 'figure'),
+        [Input('interval-component', 'n_intervals'),
+         State('zoom-store', 'data')],
+        State('main-graph', 'relayoutData')
+    )
+    def update_graph_live(n_intervals, zoom_data, relayout_data):
+        global new_data_available, initial_view
+        if new_data_available:
+            get_data_from_arduino()
+            new_data_available = False  # Reset the flag after reading data
+
+        # Use the stored zoom and center data or default values
+        center_lat = zoom_data['center']['lat']
+        center_lon = zoom_data['center']['lon']
+        zoom = zoom_data['zoom']
+
+        # If it's the first view or new data is added, adjust the zoom and center
+        if initial_view or len(df) == 1:
+            center_lat = df['Latitude'].mean()
+            center_lon = df['Longitude'].mean()
+            lat_range = df['Latitude'].max() - df['Latitude'].min()
+            lon_range = df['Longitude'].max() - df['Longitude'].min()
+            zoom = max(10 - max(lat_range, lon_range) * 5, 3)  # Adjust zoom level as needed
+            initial_view = False
+
+        # If relayout_data is available, update zoom and center based on user interactions
+        if relayout_data and 'mapbox.center' in relayout_data and 'mapbox.zoom' in relayout_data:
+            center_lat = relayout_data['mapbox.center']['lat']
+            center_lon = relayout_data['mapbox.center']['lon']
+            zoom = relayout_data['mapbox.zoom']
+
+        trace = create_scattermapbox_trace(df, custom_colorscale)
+        layout = create_layout(df, zoom=zoom, center_lat=center_lat, center_lon=center_lon)
+        return go.Figure(data=[trace], layout=layout)
+
+    @app.callback(
+        Output('zoom-store', 'data'),
+        Input('main-graph', 'relayoutData'),
+        State('zoom-store', 'data')
+    )
+    def update_zoom_store(relayout_data, zoom_data):
+        if relayout_data and 'mapbox.center' in relayout_data and 'mapbox.zoom' in relayout_data:
+            zoom_data['center'] = relayout_data['mapbox.center']
+            zoom_data['zoom'] = relayout_data['mapbox.zoom']
+        return zoom_data
+
+def serial_read_thread():
+    global new_data_available, data_buffer, lat, lng  # Ensure global variables are accessible
+
+    def read_from_serial():
+        while True:
+            line = ser.readline()
+            if line:
+                line = line.strip().decode()
+                if line == "start":
+                    print("start reading\n")
+                    data_buffer.clear()  # Clear the buffer at the start of new data
+                elif line == "finish":
+                    print("finish reading\n")
+                    new_data_available = True  # Set the flag when new data is available
+                    get_data_from_arduino()  # Call the function to process the received data
+                else:
+                    data_buffer.append(line)  # Buffer each line of data
+
+    thread = threading.Thread(target=read_from_serial)
+    thread.daemon = True  # Set the thread as a daemon so it terminates when the main program exits
+    thread.start()  # Start the thread
+
+def find_free_port():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(("", 0))
+    port = sock.getsockname()[1]
+    sock.close()
+    return port
+
 def main():
-    df = get_data_from_arduino()  # Initial data points
-    custom_colorscale = [
-        [0, 'green'],
-        [0.25, 'limegreen'],
-        [0.5, 'yellow'],
-        [0.75, 'orange'],
-        [1, 'red']
-    ]
     trace = create_scattermapbox_trace(df, custom_colorscale)
     layout = create_layout(df)
     fig = go.Figure(data=[trace], layout=layout)
 
     app = initialize_dash_app(fig)
     register_callbacks(app, fig)
+    serial_read_thread()  # Call the serial_read_thread function to start the serial thread
 
-    if __name__ == '__main__':
-        app.run_server(debug=True, use_reloader=False, port=8055)
+    port = find_free_port()
+    app.run_server(debug=True, use_reloader=False, port=port)
 
 main()
+
