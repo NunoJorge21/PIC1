@@ -7,7 +7,7 @@ import dash_leaflet as dl
 import dash_leaflet.express as dlx
 
 HALF_SAMP_FREQ = 20000  # 20 kHz
-SPECTRAL_RESOLUTION = 10  # Hz
+SPECTRAL_RESOLUTION = 10  # Hzpy
 
 location_intensity = {'Latitude': [], 'Longitude': [], 'Intensity_dB': []}
 freq_axis = np.linspace(0, HALF_SAMP_FREQ, num=int(HALF_SAMP_FREQ / SPECTRAL_RESOLUTION) + 1, endpoint=True).tolist()

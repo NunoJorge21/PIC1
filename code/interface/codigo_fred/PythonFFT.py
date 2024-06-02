@@ -1,125 +1,114 @@
 import serial
 import time
 import numpy as np
-import matplotlib.pyplot as p
+import matplotlib.pyplot as plt
 import re
 
-NSAMP = 1024
+NUM_SAMPLES = 1024
 NF = 512
+FS = 25000  # Sampling frequency same as Arduino
 
 def sscanf(string, format_string):
     pattern = format_string.replace('%d', r'(-?\d+)').replace('%f', r'(-?\d+\.\d+)').replace('%s', r'(\S+)')
     match = re.match(pattern, string)
     if match:
         return match.groups()
+    return None
 
-
-
-def ReadLine(string):
-    i = 1
+def read_line(string, sensor_data):
     data = sscanf(string, "%s %d %d %d %d")
-    #print(data)
     if data is not None and data[0] == "S:":
-        for i in range(1,5):
-            X.append(int(data[i]))
+        for i in range(1, 5):
+            sensor_data.append(int(data[i]))
 
-def ReadStuff():
-    X.clear()
-    T.clear()
-    F.clear()
-    S.clear()
-    fs = 25000  #sampling freq same as arduino
-    tSample = 1/fs
-    i = 0
-    # Read the points from arduino
-    while 1:
-        line = ser.readline()
-        line = line.strip()
-        line = line.decode()
-        if line == "finish": 
+def read_data_from_serial(ser):
+    sensor_data = []
+    time_stamps = []
+    gps_pattern = r"position:Lat: (-?\d+\.\d+), Lng: (-?\d+\.\d+)"
+    sample_interval = 1 / FS
+    sample_index = 0
+
+    while True:
+        try:
+            line = ser.readline().strip().decode()
+        except Exception as e:
+            print(f"Error reading line: {e}")
+            continue
+
+        if re.match(gps_pattern, line):
+            lat, lng = map(float, re.findall(gps_pattern, line)[0])
+            print(f"Latitude: {lat}, Longitude: {lng}")
+            continue
+
+        if line == "finish":
             print("finished reading")
             break
-        
-        ReadLine(line)
-        T.append(tSample*i)
-        T.append(tSample*(i+1))
-        T.append(tSample*(i+2))
-        T.append(tSample*(i+3))
-        i = i + 4
 
-    #Bilateral Fourier Transform
-    Y = np.fft.fft(X)
-    F1 = np.fft.fftfreq(NSAMP, tSample)
+        read_line(line, sensor_data)
+        for j in range(4):
+            time_stamps.append(sample_interval * (sample_index + j))
+        sample_index += 4
 
-    # Conversion to unilateral
-    i = 0
-    while(F1[i] >= 0): #Curiosamente, a função fft.fftfreq ordena o vetor F1 com as frequência positivas primeiro, seguidas das negativas. Além disso, estão ordenadas de forma crescente (as positivas) 
-        F.append(F1[i])
-        if i == 0: S.append(pow(abs(Y[i])/NSAMP, 2))
-        else: S.append(2*pow(abs(Y[i])/NSAMP,2))
-        i = i + 1
-    N_points = i
-    S[N_points - 1] = S[N_points - 1]/2
-    del F1
+    return np.array(time_stamps), np.array(sensor_data)
 
-    # Unilateral power spectrum
-    S_dB = 10*np.log10(S)
+def compute_fft(sensor_data, sample_interval):
+    Y = np.fft.fft(sensor_data)
+    F1 = np.fft.fftfreq(NUM_SAMPLES, sample_interval)
 
-    #Plots
-    p.figure(1, figsize=(10, 6)) #Tamanho customizável
+    F = F1[:NUM_SAMPLES//2]
+    power_spectrum = (2.0 / NUM_SAMPLES) * np.abs(Y[:NUM_SAMPLES//2])**2
+    power_spectrum_dB = 10 * np.log10(power_spectrum)
+    
+    return F, power_spectrum_dB
 
-    #Plot of the Audio
-    p.subplot(2, 1, 1)
-    p.plot(T, X)
+def compute_sound_level_dB(signal_data):
+    rms_value = np.sqrt(np.mean(np.square(signal_data)))
+    dB_value = 20 * np.log10(rms_value)
+    return dB_value
 
-    #Plot Information
-    p.title('Signal Recorded')
-    p.xlabel('Time [s]')
-    p.ylabel('Amplitude [V]') #Mudar para as devidas unidades
-    p.grid()
-    ax = p.gca()
-    ax.set_xlim(0,T[NSAMP-1])
+def plot_data(time_stamps, sensor_data, F, power_spectrum_dB, sound_level_dB):
+    plt.figure(1, figsize=(10, 6))
 
-    #Plot of the Density Power Spectrum 
-    p.subplot(2, 1, 2)
+    # Plot of the Audio
+    plt.subplot(2, 1, 1)
+    plt.plot(time_stamps, sensor_data)
+    plt.title(f'Signal Recorded - Sound Level: {sound_level_dB:.2f} dB')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Amplitude [V]')
+    plt.grid(True)
 
-    #Plot options
-    #p.plot(F, S) #Unidades lineares
-    #p.semilogx(F,S) #Por década, Unidades lineares
-    p.plot(F, S_dB) #Unidades logarítmicas
-    #p.semilogx(F,S_dB) #Por década, logarítmicas
+    # Plot of the Density Power Spectrum
+    plt.subplot(2, 1, 2)
+    plt.plot(F, power_spectrum_dB)
+    plt.title('Power Spectrum')
+    plt.xlabel('Frequency [Hz]')
+    plt.ylabel('Power [dBW]')
+    plt.grid(True)
 
-    #Plot Information
-    p.title('Power Spectrum')
-    p.xlabel('Frequency [Hz]')
-    p.ylabel('Power [dBW]') #Unidades Lineares
-    #p.ylabel('Power [dBW]') #Unidades logarítmicas
-    p.grid()
-    ax = p.gca()
-    ax.set_xlim(0,F[N_points - 1]) #Linear
-    #ax.set_xlim(0.1,F[N_points - 1]) #Décadas
+    plt.tight_layout()
+    plt.show()
 
-    p.tight_layout()
-    p.show()
+def main():
+    try:
+        ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=100)
+        time.sleep(2)
+    except Exception as e:
+        print(f"Error opening serial port: {e}")
+        return
 
-#Data Vector
-X = [] #Signal from Arduino
-T = [] #Time Vector of the samples
-F = [] #Frequency vector
-S = [] #Power Spectrum
-
-ser = serial.Serial('COM8',9600,timeout=100)
-time.sleep(2)
-
-while(1):
-    line = ser.readline()
-    if line != 0:
-        line = line.strip()
-        line = line.decode()
+    while True:
+        line = ser.readline().strip().decode()
         if line == "start":
-            print("start reading\n")
-            ReadStuff()
+            print("start reading")
+            time_stamps, sensor_data = read_data_from_serial(ser)
+            sample_interval = 1 / FS
+            F, power_spectrum_dB = compute_fft(sensor_data, sample_interval)
+            sound_level_dB = compute_sound_level_dB(sensor_data)
+            print(f"Sound Level: {sound_level_dB:.2f} dB")
+            plot_data(time_stamps, sensor_data, F, power_spectrum_dB, sound_level_dB)
+            break
 
+    ser.close()
 
-del S, F, X, T, ser
-exit()
+if __name__ == "__main__":
+    main()

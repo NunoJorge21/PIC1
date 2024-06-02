@@ -5,7 +5,9 @@ pip install virtualenv
 
 --------------------criar ambiente virtual------------------------------------------
 #criar ambiente virtual (uma pasta que tem os requesitos)
-virtualenv -p /usr/bin/python3 pic_env  #create virtualenv para python 3.8
+
+#create virtualenv para python 3.8
+virtualenv -p /usr/bin/python3 pic_env  
 ------------------------------------------------------------------------------------
 
 --------------------ativar ambiente virtual----------------------------------------
