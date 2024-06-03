@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Coordinates Map</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>GPS Coordinates Map</h1>
+    <div id="map" style="height: 600px;"></div>
+    <script>
+        function loadMap() {
+            $.get('/map', function (data) {
+                $('#map').html(data);
+            });
+        }
+
+        function updateMap() {
+            $.get('/update', function (data) {
+                loadMap();
+            });
+        }
+
+        $(document).ready(function() {
+            loadMap();
+            setInterval(updateMap, 5000); // Update map every 5 seconds
+        });
+    </script>
+</body>
+</html>

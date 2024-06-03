@@ -15,7 +15,6 @@ from serial_reader import serial_read_thread
 from data_processing import get_data_from_arduino
 import global_vars as gv
 
-
 def main():
     # Initialize serial port
     gv.ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=100)
@@ -27,11 +26,12 @@ def main():
 
     app = initialize_dash_app(fig)
     register_callbacks(app, fig)
-    serial_read_thread()  # Call the serial_read_thread function to start the serial thread
+    serial_read_thread(app)  # Call the serial_read_thread function with the app instance
 
     if __name__ == '__main__':
-        app.run_server(debug=True, use_reloader=False, port=8061)
+        app.run_server(debug=True, use_reloader=False, port=8067)
 
 main()
+
 
 

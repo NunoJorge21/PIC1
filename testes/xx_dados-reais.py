@@ -341,6 +341,6 @@ def main():
     serial_read_thread()  # Call the serial_read_thread function to start the serial thread
 
     if __name__ == '__main__':
-        app.run_server(debug=True, use_reloader=False, port=8055)
+        app.run_server(debug=True, use_reloader=False, port=1055)
 
 main()

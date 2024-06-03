@@ -6,6 +6,7 @@ from data_processing import get_data_from_arduino
 from layout import create_scattermapbox_trace, create_layout
 import global_vars as gv
 
+
 def register_callbacks(app, fig):
     @app.callback(
         Output('url', 'pathname'),
@@ -124,9 +125,9 @@ def register_callbacks(app, fig):
 
     @app.callback(
         Output('main-graph', 'figure'),
-        Input('interval-component', 'n_intervals')
+        Input('data-update-trigger', 'data')
     )
-    def update_graph_live(n_intervals):
+    def update_graph_live(data):
         if gv.new_data_available:
             get_data_from_arduino()
             gv.new_data_available = False  # Reset the flag after reading data

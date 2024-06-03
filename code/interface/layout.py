@@ -70,7 +70,6 @@ def initialize_dash_app(fig):
         dcc.Location(id='url', refresh=False),
         create_navbar(),
         html.Div(id='page-content', style={'padding': '20px', 'marginTop': '56px'}),
-        dcc.Interval(id='interval-component', interval=1 * 1000, n_intervals=0)  # Update every second
+        dcc.Store(id='data-update-trigger', data=0)  # Store component to trigger updates
     ])
     return app
-

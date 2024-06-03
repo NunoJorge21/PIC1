@@ -1,12 +1,15 @@
+# serial_reader.py
+# serial_reader.py
 import threading
 import serial
 import time
 import re
-
 from data_processing import get_data_from_arduino
 import global_vars as gv
+from dash import callback_context, no_update
+from dash.dependencies import Output, State
 
-def serial_read_thread():
+def serial_read_thread(app):
     def read_from_serial():
         while True:
             line = gv.ser.readline()
@@ -18,7 +21,10 @@ def serial_read_thread():
                 elif line == "finish":
                     print("Finish reading")
                     gv.new_data_available = True  # Set the flag when new data is available
-                    get_data_from_arduino()  # Call the function to process the received data
+                    get_data_from_arduino()  # Process the received data
+                    app.server.app_context().push()
+                    store_data = app.layout['data-update-trigger'].data
+                    app.layout['data-update-trigger'].data = store_data + 1
                 else:
                     gv.data_buffer.append(line)  # Buffer each line of data
                     print(f"Buffered line: {line}")
