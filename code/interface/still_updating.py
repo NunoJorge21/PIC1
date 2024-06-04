@@ -291,7 +291,7 @@ def update_graph_live(data):
 
 def main():
     try:
-        ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=100)
+        ser = serial.Serial('/dev/ttyUSB2', 9600, timeout=100)
         time.sleep(2)
         
         register_callbacks(app)

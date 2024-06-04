@@ -39,7 +39,7 @@ custom_colorscale = [
 
 # Data vectors
 X, T, F, S, S_dB = [], [], [], [], []
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=100)
+ser = serial.Serial('/dev/ttyUSB2', 9600, timeout=100)
 time.sleep(2)
 
 # Global variables for data storage
@@ -341,6 +341,6 @@ def main():
     serial_read_thread()  # Call the serial_read_thread function to start the serial thread
 
     if __name__ == '__main__':
-        app.run_server(debug=True, use_reloader=False, port=1055)
+        app.run_server(debug=True, use_reloader=False, port=1056)
 
 main()

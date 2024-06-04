@@ -31,7 +31,7 @@ custom_colorscale = [
 
 # Data vectors
 X, T, F, S, S_dB = [], [], [], [], []
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=100)
+ser = serial.Serial('/dev/ttyUSB2', 9600, timeout=100)
 time.sleep(2)
 
 # Global variables for data storage

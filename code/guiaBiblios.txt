@@ -1,8 +1,7 @@
-
 Arduino Mbed OS Nano Boards
+
 terminar instalação desta biblio(linux):
- .arduino15/packages/arduino/hardware/mbed_nano/4.1.1/post_install.sh 
- (correr este ficheiro as root)
+ .arduino15/packages/arduino/hardware/mbed_nano/4.1.1/post_install.sh (correr este ficheiro as root)
 
 arduino board: Arduino Nano RP2040 Connect
 
@@ -11,6 +10,8 @@ for sampling:
 WIFININA
 PDM
 TinyGPSPlus
+Adafruit Zero PDM Library@1.2.3
+
 
 LoRa by Sandeep Mistry
 
@@ -20,11 +21,3 @@ LoRa by Sandeep Mistry
 
 python3 biblios:
 sudo apt install python3-pip (pip para instalar biblios)
-pip install pyserial
-pip install numpy
-pip install matplotlib
-pip install plotly
-pip install pandas
-pip install dash
-pip install dash_bootstrap_components
-pip install dash_leaflet
