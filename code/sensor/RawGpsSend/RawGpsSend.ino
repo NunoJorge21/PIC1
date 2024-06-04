@@ -169,12 +169,6 @@ void GPSInit(){
 
 //Gets Latitude and Longitude [Work in progress]
 bool GetGPS(){
-
-  // Example latitude and longitude values
-  // double lat = 37.774929;
-  // double lng = -122.419416;
-  // sprintf(location, "Lat: %.6f, Lng: %.6f", lat, lng);
-  // return true;
   while (Serial1.available() > 0) {
     if (gps.encode(Serial1.read())) {
       if(gps.location.isValid()){
