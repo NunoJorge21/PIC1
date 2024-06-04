@@ -169,26 +169,20 @@ void GPSInit(){
 
 //Gets Latitude and Longitude [Work in progress]
 bool GetGPS(){
-
-  // Example latitude and longitude values
-  double lat = 37.774929;
-  double lng = -122.419416;
-  sprintf(location, "Lat: %.6f, Lng: %.6f", lat, lng);
-  return true;
-  // while (Serial1.available() > 0) {
-  //   if (gps.encode(Serial1.read())) {
-  //     if(gps.location.isValid()){
-  //       //Serial.print("GPS Location is valid.");
-  //       sprintf(location, "Lat: %.6f, Lng: %.6f", gps.location.lat(), gps.location.lng());
-  //       //Serial.println(location);
-  //       return true;
-  //     }
-  //     else{
-  //       Serial.println(F("INVALID"));
-  //       return false;
-  //     }
-  //   }
-  // }
+  while (Serial1.available() > 0) {
+    if (gps.encode(Serial1.read())) {
+      if(gps.location.isValid()){
+        //Serial.print("GPS Location is valid.");
+        sprintf(location, "Lat: %.6f, Lng: %.6f", gps.location.lat(), gps.location.lng());
+        //Serial.println(location);
+        return true;
+      }
+      else{
+        Serial.println(F("INVALID"));
+        return false;
+      }
+    }
+  }
 }
 
 //Starts PDM
@@ -242,7 +236,16 @@ void loop() {
       
       LoRaSend(sampled);
       Serial.println("Completed my task");
-    }else{delay(1000);}
+    }else{
+      Serial.println("no gps available");
+      digitalWrite(RE_LED, HIGH);
+      delay(300);
+      digitalWrite(RE_LED, LOW);
+      delay(100);
+      digitalWrite(RE_LED, HIGH);
+      delay(300);
+      digitalWrite(RE_LED, LOW);
+    }
   }
 
   LoRaReceive();
