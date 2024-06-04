@@ -19,8 +19,7 @@ source ~/Documents/repositorios/SLAM_EKF_Turtlebot3/0.virtual_enviroment/bin/act
 #deactivate virtualenv
 deactivate
 
-#install requirements
-pip install -r requirements.txt
+
 
 #para dar source no bashrc para ativar o ambiente virtual sempre que abres o terminal
 code ~/.bashrc
