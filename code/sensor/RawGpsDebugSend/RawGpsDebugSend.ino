@@ -16,6 +16,15 @@
 //GPS Variables
 TinyGPSPlus gps;
 char location[30];
+const int numCoords = 5;
+static int coordIndex = 0;
+const char coordinates[numCoords][50] = {
+  "Lat: 37.7749, Lng: -122.4194",
+  "Lat: 37.7849, Lng: -122.4194",
+  "Lat: 37.7949, Lng: -122.4194",
+  "Lat: 37.8049, Lng: -122.4194",
+  "Lat: 37.8149, Lng: -122.4194"
+};
 
 //Microphone Variables
 
@@ -167,23 +176,12 @@ void GPSInit(){
 }
 
 //Gets Latitude and Longitude [Work in progress]
-bool GetGPS(){
-  strcpy(location,"Lat: 37.7749, Lng: -122.4194");
+bool GetGPS(int index) {
+  if (index < 0 || index >= numCoords) {
+    return false;
+  }
+  strcpy(location, coordinates[index]);
   return true;
-  // while (Serial1.available() > 0) {
-  //   if (gps.encode(Serial1.read())) {
-  //     if(gps.location.isValid()){
-  //       //Serial.print("GPS Location is valid.");
-  //       sprintf(location, "Lat: %.6f, Lng: %.6f", gps.location.lat(), gps.location.lng());
-  //       //Serial.println(location);
-  //       return true;
-  //     }
-  //     else{
-  //       Serial.println(F("INVALID"));
-  //       return false;
-  //     }
-  //   }
-  // }
 }
 
 //Starts PDM
@@ -227,16 +225,19 @@ void setup() {
   LoRaInit();
 }
 
+
+
 void loop() {
   
   if (digitalRead(BUTTON_PIN) == HIGH) {
-    if(GetGPS()){
+    if(GetGPS(coordIndex)){
       Serial.print("got the gps:");
       Serial.println(location);
       GetSamples();
       
       LoRaSend(sampled);
       Serial.println("Completed my task");
+      coordIndex = (coordIndex + 1) % numCoords;
     }else{delay(1000);}
   }
 

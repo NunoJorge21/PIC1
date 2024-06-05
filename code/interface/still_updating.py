@@ -113,27 +113,32 @@ def get_data_from_arduino(ser):
         return pd.DataFrame(location_intensity)
 
 def create_scattermapbox_trace(df, custom_colorscale):
-    return go.Scattermapbox(
-        lat=df['Latitude'],
-        lon=df['Longitude'],
-        mode='markers',
-        marker=dict(
-            size=20,
-            color=df['Intensity_dB'],
-            opacity=0.8,
-            colorscale=custom_colorscale,
-            cmin=0,  # Minimum dB level
-            cmax=120,  # Maximum dB level
-            showscale=True,
-            colorbar=dict(
-                title='Intensity (dB)',
-                titleside='right',
-                ticks='outside',
-            )
-        ),
-        text=[f'Time: {df["Timestamp"][i]}' for i in range(len(df))],  # Display timestamp
-        customdata=[i for i in range(len(df))]
-    )
+    if 'Latitude' in df.columns and 'Longitude' in df.columns:
+        print("Latitude and Longitude columns found")
+        return go.Scattermapbox(
+            lat=df['Latitude'],
+            lon=df['Longitude'],
+            mode='markers',
+            marker=dict(
+                size=20,
+                color=df['Intensity_dB'],
+                opacity=0.8,
+                colorscale=custom_colorscale,
+                cmin=0,  # Minimum dB level
+                cmax=120,  # Maximum dB level
+                showscale=True,
+                colorbar=dict(
+                    title='Intensity (dB)',
+                    titleside='right',
+                    ticks='outside',
+                )
+            ),
+            text=[f'Time: {df["Timestamp"][i]}' for i in range(len(df))],  # Display timestamp
+            customdata=[i for i in range(len(df))]
+        )
+    else:
+        print("Latitude and Longitude columns not found")
+
 
 def create_layout(df):
     return go.Layout(
@@ -291,7 +296,7 @@ def update_graph_live(data):
 
 def main():
     try:
-        ser = serial.Serial('/dev/ttyUSB2', 9600, timeout=100)
+        ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=100)
         time.sleep(2)
         
         register_callbacks(app)
