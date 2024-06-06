@@ -1,8 +1,8 @@
 ---
 Title: "Weeks 13 and 14"
 date: 2024-05-24T22:00:00+06:00
-image_webp: images/blog/interviews.webp
-image: images/blog/interviews.jpg
+image_webp: images/blog/weeks13_14.webp
+image: images/blog/weeks13_14.jpg
 author: SSM Team
 description: "This is meta description"
 ---

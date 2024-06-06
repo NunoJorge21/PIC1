@@ -1,8 +1,8 @@
 ---
 title: "Week 5"
 date: 2024-03-22T22:00:00+06:00
-image_webp: images/blog/interviews.webp
-image: images/blog/interviews.jpg
+image_webp: images/blog/week5.webp
+image: images/blog/week5.jpg
 author: SSM Team
 description: "This is meta description"
 ---

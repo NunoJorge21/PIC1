@@ -1,8 +1,8 @@
 ---
 Title: "Week 10"
 date: 2024-04-26T22:00:00+06:00
-image_webp: images/blog/interviews.webp
-image: images/blog/interviews.jpg
+image_webp: images/blog/week10.webp
+image: images/blog/week10.jpg
 author: SSM Team
 description: "This is meta description"
 ---
