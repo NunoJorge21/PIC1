@@ -104,9 +104,19 @@ link = "plugins/google-map/map.js"
 #weight = 3
 
 [[Languages.en.menu.main]]
+name = "Video"
+url = "https://drive.google.com/file/d/1juXBcSza-4-n64UaydWSXoMnBrr0HvmT/view?usp=drive_link"
+weight = 1
+
+[[Languages.en.menu.main]]
+name = "Pitch deck"
+url = "https://drive.google.com/file/d/1kIHaOQKg2P7juWw1oMMVlE6bPEt-oGQB/view?usp=drive_link"
+weight = 2
+
+[[Languages.en.menu.main]]
 name = "Intermediate delivery"
 url = "https://drive.google.com/file/d/1NnwuXQ0wVBY1DLOq_a0hsd-rSxvmTht_/view?usp=drive_link"
-weight = 4
+weight = 3
 
 [[Languages.en.menu.main]]
 name = "Project proposal"
@@ -116,7 +126,7 @@ weight = 4
 [[Languages.en.menu.main]]
 name = "Team"
 url = "#team"
-weight = 4
+weight = 5
 
 #[[Languages.en.menu.main]]
 #name = "Pricing"

@@ -73,8 +73,8 @@ team:
 
       # team member loop
     - name : Nuno Jorge
-      image_webp : images/team/Nuno.webp
-      image : images/team/Nuno.jpg
+      image_webp : images/team/Nuno_new.webp
+      image : images/team/Nuno_new.jpg
       designation : Data Presentation Team
       #content : _If I have seen farther than others, it is because I have stood on the shoulders of giants_ - Sir Isaac Newton
       content : Electrical and Computer Engineering
