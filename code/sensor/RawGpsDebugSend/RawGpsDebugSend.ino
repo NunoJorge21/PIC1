@@ -19,7 +19,7 @@ char location[30];
 const int numCoords = 5;
 static int coordIndex = 0;
 const char coordinates[numCoords][50] = {
-  "Lat: 37.7749, Lng: -122.4194",
+  "Lat: 37.774923, Lng: -122.419423",
   "Lat: 37.7849, Lng: -122.4194",
   "Lat: 37.7949, Lng: -122.4194",
   "Lat: 37.8049, Lng: -122.4194",
