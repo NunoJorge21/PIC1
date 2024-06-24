@@ -59,7 +59,7 @@ void LoRaInit(){
   }
 
   LoRa.setSpreadingFactor(7);       // Set spreading factor to the lowest available (SF6)
-  LoRa.setSignalBandwidth(500E3);     // Set signal bandwidth to the widest available (500 kHz)
+  LoRa.setSignalBandwidth(125E3);     // Set signal bandwidth to the widest available (500 kHz)
   LoRa.setCodingRate4(5);           // Set coding rate to the lowest available (CR4/5)
 }
 

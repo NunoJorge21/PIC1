@@ -1,0 +1,32 @@
+got the gps:Lat: 38.76367500, Lng: -9.11962
+got the gps:Lat: 38.76367500, Lng: -9.11962
+got the gps:Lat: 38.76320333, Lng: -9.11993
+got the gps:Lat: 38.76320333, Lng: -9.11993
+got the gps:Lat: 38.76320333, Lng: -9.11993
+got the gps:Lat: 38.76317433, Lng: -9.11995
+
+got the gps:Lat: 38.76317433, Lng: -9.11995
+got the gps:Lat: 38.76306983, Lng: -9.12006
+got the gps:Lat: 38.76306983, Lng: -9.12006
+got the gps:Lat: 38.76258067, Lng: -9.12051
+
+got the gps:Lat: 38.76254567, Lng: -9.12048
+got the gps:Lat: 38.76243233, Lng: -9.12037
+got the gps:Lat: 38.76243233, Lng: -9.12037
+got the gps:Lat: 38.76232467, Lng: -9.12017
+got the gps:Lat: 38.76233267, Lng: -9.12009
+got the gps:Lat: 38.76233267, Lng: -9.12009
+
+got the gps:Lat: 38.76246300, Lng: -9.11985
+got the gps:Lat: 38.76246300, Lng: -9.11985
+got the gps:Lat: 38.76163983, Lng: -9.11477
+got the gps:Lat: 38.76163983, Lng: -9.11477
+got the gps:Lat: 38.76163983, Lng: -9.11477
+
+
+got the gps:Lat: 38.76169883, Lng: -9.11352
+got the gps:Lat: 38.76169883, Lng: -9.11352
+got the gps:Lat: 38.76169883, Lng: -9.11352
+got the gps:Lat: 38.76169883, Lng: -9.11352
+got the gps:Lat: 38.76172667, Lng: -9.11344
+got the gps:Lat: 38.76188533, Lng: -9.11303
