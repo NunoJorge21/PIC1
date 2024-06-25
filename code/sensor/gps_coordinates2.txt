@@ -1,0 +1,10 @@
+got the gps:Lat: 38.76413683, Lng: -9.11960833
+got the gps:Lat: 38.76413683, Lng: -9.11960833
+got the gps:Lat: 38.76413683, Lng: -9.11960833
+got the gps:Lat: 38.76413683, Lng: -9.11960833
+got the gps:Lat: 38.76413017, Lng: -9.11960900
+got the gps:Lat: 38.76415383, Lng: -9.11951733
+got the gps:Lat: 38.76415750, Lng: -9.11944617
+got the gps:Lat: 38.76415750, Lng: -9.11944617
+got the gps:Lat: 38.76415750, Lng: -9.11944617
+

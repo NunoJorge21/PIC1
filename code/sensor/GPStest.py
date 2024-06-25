@@ -4,7 +4,7 @@ import pandas as pd
 import contextily as ctx
 
 # Read the text file
-with open('picRep/PIC1/code/sensor/gps_coordinates.txt', 'r') as file:
+with open('picRep/PIC1/code/sensor/gps_coordinates3.txt', 'r') as file:
     lines = file.readlines()
 
 # Extract latitude and longitude from each line

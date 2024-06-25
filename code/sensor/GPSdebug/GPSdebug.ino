@@ -15,7 +15,7 @@
 
 //GPS Variables
 TinyGPSPlus gps;
-char location[30];
+char location[40];
 
 //Microphone Variables
 
