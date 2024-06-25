@@ -72,7 +72,7 @@ def ReadStuff():
     tSample = 1 / fs
     i = 0
     for line in data_buffer:
-        match = re.match(r"position:Lat: (-?\d+\.\d+), Lng: (-?\d+\.\d+)", line)
+        match = re.match(r"position:L:(-?\d+\.\d+),(-?\d+\.\d+)", line)
         if match:
             lat, lng = float(match.group(1)), float(match.group(2))
             continue
