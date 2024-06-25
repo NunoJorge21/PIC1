@@ -173,7 +173,7 @@ bool GetGPS(){
     if (gps.encode(Serial1.read())) {
       if(gps.location.isValid()){
         //Serial.print("GPS Location is valid.");
-        sprintf(location, "Lat: %.6f, Lng: %.6f", gps.location.lat(), gps.location.lng());
+        sprintf(location, "L:%.8f,%.8f", gps.location.lat(), gps.location.lng());
         //Serial.println(location);
         return true;
       }

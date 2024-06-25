@@ -13,6 +13,7 @@ unsigned long t1;
 unsigned long t2;
 char location[30];
 int loraCount = 0;
+int rssi=0;
 
 // Function to initialize LoRa
 void LoRaInit() {
@@ -50,6 +51,7 @@ char* isValidMessage(char message[]) {
     if (sscanf(message, "Lat: %lf, Lng: %lf", &lat, &lng) == 2) {
         strcpy(location, message);
         strcpy(message, "start");
+        rssi = LoRa.packetRssi(); //read signal strength
         return message;
     }
 
@@ -161,6 +163,8 @@ void loop() {
       Serial.println("finish");
       Serial.print("loraCount:");
       Serial.println(loraCount);
+      Serial.print("Coordenates RSSI:");
+      Serial.println(rssi); //print signal strength
     }
   }
   

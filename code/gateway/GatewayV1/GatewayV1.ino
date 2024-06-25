@@ -45,8 +45,8 @@ bool isNumeric(const char* str) {
 char* isValidMessage(char message[]) {
     static char result[100];  // Static to ensure the returned pointer remains valid after function returns
     double lat, lng;
-
-    if (sscanf(message, "Lat: %lf, Lng: %lf", &lat, &lng) == 2) {
+ 
+    if (sscanf(message, "L:%lf,%lf", &lat, &lng) == 2) {
         strcpy(location, message);
         strcpy(message, "start");
         return message;
