@@ -43,7 +43,7 @@ bool GetGPS(){
   while (Serial1.available() > 0) {
     if (gps.encode(Serial1.read())) {
       if(gps.location.isValid()){
-        sprintf(location, "Lat: %.8f, Lng: %.8f", gps.location.lat(), gps.location.lng());
+        //sprintf(location, "Lat: %.8f, Lng: %.8f", gps.location.lat(), gps.location.lng());
         return true;
       } else {
         return false;
@@ -85,6 +85,35 @@ void getAverageCoordinates(double &avgLat, double &avgLng) {
   avgLng /= count;
 }
 
+// Reset coordinates arrays
+void resetCoordinates() {
+  for (int i = 0; i < N; i++) {
+    latitudes[i] = 0;
+    longitudes[i] = 0;
+  }
+  coordIndex = 0;
+  bufferFilled = false;
+}
+
+void GPSData(){
+  resetCoordinates();
+  Serial.println("Collecting GPS data...");
+
+  while (!bufferFilled) {
+    if (GetGPS() == true) {
+      updateCoordinates(gps.location.lat(), gps.location.lng());
+    }
+  }
+
+  double avgLat, avgLng;
+  getAverageCoordinates(avgLat, avgLng);
+  Serial.print("avg got the gps:");
+  Serial.print("Lat: ");
+  Serial.print(avgLat, 8);
+  Serial.print(", Lng: ");
+  Serial.println(avgLng, 8);
+}
+
 // Setup
 void setup() {
   // Starting connection to computer
@@ -99,18 +128,9 @@ void setup() {
 }
 
 void loop() {
-  if (GetGPS() == true) {
-    updateCoordinates(gps.location.lat(), gps.location.lng());
-  }
-
+  GetGPS();
   if (digitalRead(BUTTON_PIN) == HIGH) {
-    double avgLat, avgLng;
-    getAverageCoordinates(avgLat, avgLng);
-    Serial.print("avg got the gps:");
-    Serial.print("Lat: ");
-    Serial.print(avgLat, 8);
-    Serial.print(", Lng: ");
-    Serial.println(avgLng, 8);
+    GPSData();
     delay(1000); // Add a delay to debounce the button
   }
 }
