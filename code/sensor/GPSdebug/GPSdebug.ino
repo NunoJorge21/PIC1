@@ -78,9 +78,9 @@ void loop() {
       Serial.println(location);
     
     }else{
-      Serial.println("no gps available");
+      //Serial.println("no gps available");
     }
-    delay(1000);
+    //delay(1000);
   }
 }
    

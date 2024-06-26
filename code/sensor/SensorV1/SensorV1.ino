@@ -228,8 +228,9 @@ void setup() {
 
 void loop() {
   
-  if (digitalRead(BUTTON_PIN) == HIGH) {
-    if(GetGPS()){
+  // if (digitalRead(BUTTON_PIN) == HIGH) {
+  if (GetGPS()==true && digitalRead(BUTTON_PIN) == HIGH) {
+    //if(GetGPS()){
       Serial.print("got the gps:");
       Serial.println(location);
       GetSamples();
@@ -245,7 +246,7 @@ void loop() {
       digitalWrite(RE_LED, HIGH);
       delay(300);
       digitalWrite(RE_LED, LOW);
-    }
+    //}
   }
 
   LoRaReceive();
