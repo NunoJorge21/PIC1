@@ -371,6 +371,6 @@ def main():
     serial_read_thread()
 
     if __name__ == '__main__':
-        app.run_server(debug=True, use_reloader=False, port=8055)
+        app.run_server(debug=True, use_reloader=False, port=8053)
 
 main()
