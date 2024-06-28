@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=SSM_Interface
+Comment=SSM Interface
+Exec=/home/nunojorge/Documents/IST/PIC/executavel.sh
+#Icon=/path/to/an/icon.png
+Terminal=true
+Type=Application
+
