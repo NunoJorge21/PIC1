@@ -346,7 +346,10 @@ def serial_read_thread():
 
         while True:
             line = ser.readline()
-            if line:
+            
+            if line == "--------------- CUT HERE FOR EXCEPTION DECODER ---------------":
+                time.sleep(2)
+            elif line:
                 line = line.strip().decode()
                 
                 if line == "start":
