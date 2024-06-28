@@ -42,6 +42,7 @@ custom_colorscale = [
 ]
 
 X, T, F, S, S_dB = [], [], [], [], []
+RMS = 0
 ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=100)
 time.sleep(2)
 
@@ -92,6 +93,11 @@ def ReadStuff():
     if not X:
         print("Warning: X array is empty. Skipping FFT computation.")
         return
+    
+    rms = np.array(X)
+    rms = np.mean(rms**2)
+    RMS = np.sqrt(rms)
+    RMS = MEMS_calibration.raw_to_dBSPL(RMS)
 
     Y = np.fft.fft(X)
     F1 = np.fft.fftfreq(NSAMP, tSample)
@@ -103,12 +109,11 @@ def ReadStuff():
             S[i] = 0.00001
         i += 1
     S[i - 1] = S[i - 1] / 2
-
     S_dB = MEMS_calibration.S_to_dbSPL(S)
 
 
 def get_data_from_arduino():
-    global lat, lng, df, data_buffer, S_dB, freq_axis, frequency_responses, new_data_available
+    global lat, lng, df, data_buffer, S_dB, RMS, freq_axis, frequency_responses, new_data_available
     ReadStuff()
     data_buffer = []
 
@@ -123,7 +128,8 @@ def get_data_from_arduino():
 
     location_intensity['Latitude'].append(lat)
     location_intensity['Longitude'].append(lng)
-    location_intensity['Intensity_dB'].append(max(S_dB))
+    #location_intensity['Intensity_dB'].append(max(S_dB))
+    location_intensity['Intensity_dB'].append(RMS)
     df = pd.DataFrame(location_intensity)
 
     new_data_available = False
@@ -314,7 +320,11 @@ def register_callbacks(app):
                                     )
                                 ],
                                 layout=go.Layout(
-                                    xaxis=dict(title='Frequency [Hz]'),
+                                    xaxis=dict(
+                                        title='Frequency [Hz]',
+                                        type='log',  # Set x-axis to logarithmic scale
+                                        range=[np.log10(20), np.log10(max(freq_axis[button_index]))]  # Set lower limit to 20Hz
+                                    ),
                                     yaxis=dict(title='Intensity [dB]')
                                 )
                             ),
