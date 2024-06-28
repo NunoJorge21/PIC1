@@ -183,8 +183,10 @@ bool isDataOld() {
 bool GetGPS(){
   while (Serial1.available() > 0) {
     if (gps.encode(Serial1.read())) {
-      if (gps.location.isValid() && !isDataOld()) {
-        return true;
+      if (gps.location.isValid() /*&& !isDataOld()*/) {
+        if(!isDataOld()){
+          return true;
+        }
       } else {
         Serial.println(F("INVALID OR OLD DATA"));
         return false;
@@ -316,7 +318,7 @@ void loop() {
       Serial.println("Completed my task");
     }
   }else{
-    Serial.println("no gps available or data is old");
+    //Serial.println("no gps available or data is old");
     digitalWrite(RE_LED, HIGH);
     delay(800);
     digitalWrite(RE_LED, LOW);
