@@ -70,7 +70,7 @@ def ReadLine(string):
 
 
 def ReadStuff():
-    global lat, lng, data_buffer, S_dB
+    global lat, lng, data_buffer, S_dB, RMS
     X.clear()
     T.clear()
     F.clear()
@@ -103,6 +103,7 @@ def ReadStuff():
             S[i] = 0.00001
         i += 1
     S[i - 1] = S[i - 1] / 2
+
     S_dB = MEMS_calibration.S_to_dbSPL(S)
 
 
@@ -346,12 +347,15 @@ def serial_read_thread():
 
         while True:
             line = ser.readline()
-            
-            if line == "--------------- CUT HERE FOR EXCEPTION DECODER ---------------":
-                time.sleep(2)
-            elif line:
+
+            if line:
                 line = line.strip().decode()
                 
+                if line == "--------------- CUT HERE FOR EXCEPTION DECODER ---------------":
+                    print("ERROR! Please try again!")
+                    time.sleep(2)
+                    ser.flushInput()
+                                
                 if line == "start":
                     print("Start reading")
                     data_buffer.clear()
