@@ -147,7 +147,7 @@ def create_scattermapbox_trace(df, custom_colorscale):
                 ticks='outside'
             )
         ),
-        text=[f'Intensity: {intensity:.2f} dB, Button {i + 1}' for i, intensity in enumerate(df['Intensity_dB'])],
+        text=[f'Intensity: {intensity:.2f} dB, Point {i + 1}' for i, intensity in enumerate(df['Intensity_dB'])],
         customdata=[i for i in range(len(df))]
     )
 
@@ -175,7 +175,7 @@ def create_navbar():
                 dbc.Nav(
                     [
                         dbc.NavItem(dbc.Button("Recenter", id='recenter-button', color="primary", className="me-1")),
-                        dbc.NavItem(dbc.Button("Start Data Collection", id='start-data-button', color="primary", className="me-1")),
+                        dbc.NavItem(dbc.Button("Refresh Data", id='start-data-button', color="primary", className="me-1")),
                     ],
                     className="ms-auto",
                     navbar=True,
@@ -271,7 +271,7 @@ def register_callbacks(app):
             return '/'
         else:
             point_index = clickData['points'][0]['customdata']
-            return f'/plot/button_{point_index + 1}'
+            return f'/plot/point_{point_index + 1}'
 
     @app.callback(
         Output('link-home', 'active'),
@@ -292,7 +292,7 @@ def register_callbacks(app):
             return (
                 html.Div([
                     dcc.Graph(id='main-graph'),
-                    html.H3("Remove buttons:"),
+                    html.H3("Remove data points:"),
                     html.Div(id='button-container')
                 ]),
                 create_navbar()
@@ -324,7 +324,7 @@ def register_callbacks(app):
                     None
                 )
             except IndexError:
-                return html.Div([html.H3('Invalid button ID')]), None
+                return html.Div([html.H3('Invalid point ID')]), None
         return html.Div("404 Page Not Found"), None
 
     @app.callback(
@@ -334,7 +334,7 @@ def register_callbacks(app):
     def update_buttons(figure):
         buttons = []
         for i in range(len(df)):
-            buttons.append(dbc.Button(f"Remove Button {i+1}", id={'type': 'remove-button', 'index': i}, color="danger", className="me-1"))
+            buttons.append(dbc.Button(f"Remove Point {i+1}", id={'type': 'remove-button', 'index': i}, color="danger", className="me-1"))
         return buttons
 
 
