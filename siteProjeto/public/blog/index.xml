@@ -6,8 +6,15 @@
     <description>Recent content in Blogs on Smart Sound Monitoring</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 06 Jun 2024 22:00:00 +0600</lastBuildDate>
+    <lastBuildDate>Fri, 28 Jun 2024 22:00:00 +0600</lastBuildDate>
     <atom:link href="https://web.tecnico.ulisboa.pt/ist1102943/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Post Scriptum</title>
+      <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/ps/</link>
+      <pubDate>Fri, 28 Jun 2024 22:00:00 +0600</pubDate>
+      <guid>https://web.tecnico.ulisboa.pt/ist1102943/blog/ps/</guid>
+      <description>The team spent the last weeks improving the prototype.&#xA;In the Graphical User Interface, other functionalities were implemented, namely, the possibility to remove data points in the map and a button to readjust the map view to a default zoom and center (which is useful in case the users lose track of their location in the map).</description>
+    </item>
     <item>
       <title>Final Week</title>
       <link>https://web.tecnico.ulisboa.pt/ist1102943/blog/final_week/</link>
